@@ -80,9 +80,19 @@ def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
     # --- Club header (logo + name) ---
-    col_logo, col_name = st.columns([1, 20], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
+    col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
+        import base64
+
     with col_logo:
-        st.image(str(LFC_LOGO), width=2222)
+        b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
+        st.markdown(
+            f"""
+            <img src="data:image/png;base64,{b64}"
+                style="width:222px; height:auto; image-rendering:auto;" />
+            """,
+            unsafe_allow_html=True,
+        )
+
     with col_name:
         st.markdown("## LUISS Finance Club")
 
