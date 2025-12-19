@@ -6,8 +6,11 @@ import seaborn as sns
 import plotly.express as px
 import statsmodels.api as sm
 
-# Load data from local downloads folder
-DATA_PATH = '~/Desktop/big-mac-source-data-v2.csv'  # Change if needed
+from pathlib import Path
+
+APP_DIR = Path(__file__).parent
+DATA_PATH = APP_DIR / "big-mac-source-data-v2.csv"
+HERO_IMG  = APP_DIR / "Big-Mac-2.png"
 
 @st.cache_data
 def load_data():
@@ -35,7 +38,7 @@ def calc_raw_index(df, big_mac_countries, base_currencies):
     df[base_currencies] = df[base_currencies].round(5)
     return df
 
-# Calculate adjusted index by regressing GDP_local on dollar_price and adjusting residuals
+# adjusted index by regressing GDP_local on dollar_price and adjusting residuals
 def calc_adjusted_index(df, regression_countries):
     df_gdp = df[(df['GDP_local'] > 0) & (df['iso_a3'].isin(regression_countries))].copy()
     adjusted_data = []
@@ -52,7 +55,7 @@ def calc_adjusted_index(df, regression_countries):
     df['adjusted'] = df['adjusted'].fillna(0)
     return df
 
-# List of countries and base currencies (same as R)
+# countries and base currencies 
 big_mac_countries = ['ARG', 'AUS', 'BRA', 'GBR', 'CAN', 'CHL', 'CHN', 'CZE', 'DNK',
                      'EGY', 'HKG', 'HUN', 'IDN', 'ISR', 'JPN', 'MYS', 'MEX', 'NZL',
                      'NOR', 'PER', 'PHL', 'POL', 'RUS', 'SAU', 'SGP', 'ZAF', 'KOR',
@@ -71,15 +74,12 @@ regression_countries = ['ARG', 'AUS', 'BRA', 'GBR', 'CAN', 'CHL', 'CHN', 'CZE', 
 base_currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY']
 
 def main():
-    from pathlib import Path
     import streamlit as st
-
-    APP_DIR = Path(__file__).parent
-    HERO_IMG = APP_DIR / "Desktop/Big-Mac-2.png"
 
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
-    st.image(str(HERO_IMG), use_container_width=True)
+    st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
+    st.image(str(HERO_IMG), width="stretch")
 
     st.title("Interactive Big Mac Index Dashboard")
 
@@ -94,28 +94,28 @@ def main():
     df = calc_raw_index(df, big_mac_countries, base_currencies)
     df = calc_adjusted_index(df, regression_countries)
 
-    # Select date
-    # Create a mapping of year strings to full dates (taking unique years)
+    # date
+    # mapping of year strings to full dates (taking unique years)
     years = sorted(df['date'].dt.year.unique())
 
-    # Create a dict: year string -> list of full dates in that year
+    # dict: year string -> list of full dates in that year
     year_to_dates = {year: df[df['date'].dt.year == year]['date'].unique() for year in years}
 
-    # Select year in sidebar
+    # year in sidebar
     selected_year = st.sidebar.selectbox("Select Year", options=years, index=len(years)-1)
 
-    # From selected year, select a specific date (e.g. latest date in that year)
+    # from selected year, select a specific date (e.g. latest date in that year)
     selected_date = year_to_dates[selected_year][-1]  # last date in that year
 
 
-    # Base currency selector with default USD
+    # base currency selector with default USD
     base_currency = st.sidebar.selectbox("Select Base Currency", options=base_currencies, index=base_currencies.index('USD'))
 
     # Filter dataframe for the selected date
     df_date = df[df['date'] == selected_date].copy()
     df_date = df_date.sort_values(by=base_currency)
 
-    # Plot raw index
+    # plot raw index
     st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
     df_date['overvalued'] = df_date[base_currency] > 0
 
@@ -126,7 +126,7 @@ def main():
     fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
 
-    # Plot adjusted index
+    # plot adjusted index
     st.subheader(f"Adjusted Big Mac Index (GDP adjusted) on {selected_date.date()}")
     df_date['adjusted_overvalued'] = df_date['adjusted'] > 0
 
@@ -137,7 +137,7 @@ def main():
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
 
-    # GDP vs Dollar Price Scatter with regression
+    # GDP vs dollar price scatter with regression
     st.subheader("GDP vs Dollar Price with Linear Regression (Log-Log Scale)")
 
     gdp_df = df[(df['date'] == selected_date) & (df['GDP_local'] > 0) & (df['iso_a3'].isin(regression_countries))]
@@ -148,7 +148,7 @@ def main():
     ax.set_ylabel("Log(Big Mac Dollar Price)")
     st.pyplot(fig3)
 
-    # Show raw data option
+    # raw data option
     if st.checkbox("Show raw data for selected date"):
         st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
 
