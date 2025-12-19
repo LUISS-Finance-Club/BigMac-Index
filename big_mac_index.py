@@ -82,7 +82,7 @@ def main():
     # --- Club header (logo + name) ---
     col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
     with col_logo:
-        st.image(str(LFC_LOGO), width=70)
+        st.image(str(LFC_LOGO), width=100)
     with col_name:
         st.markdown("## LUISS Finance Club")
 
@@ -111,7 +111,6 @@ def main():
 
 
     #st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
-    st.image(str(HERO_IMG), width="stretch")
 
     st.title("Interactive Big Mac Index Dashboard")
 
