@@ -11,6 +11,7 @@ from pathlib import Path
 APP_DIR = Path(__file__).parent
 DATA_PATH = APP_DIR / "big-mac-source-data-v2.csv"
 HERO_IMG  = APP_DIR / "vis/Big-Mac-2.png"
+LFC_LOGO = APP_DIR / "vis" / "LFC_Bull_Circle_Blue.png"
 
 @st.cache_data
 def load_data():
@@ -77,6 +78,37 @@ def main():
     import streamlit as st
 
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
+
+    # --- Club header (logo + name) ---
+    col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
+    with col_logo:
+        st.image(str(LFC_LOGO), width=70)
+    with col_name:
+        st.markdown("## LUISS Finance Club")
+
+    st.write("")  # spacing [web:625]
+
+    # --- Intro paragraph ---
+    st.markdown(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+    )
+
+    st.write("")  # spacing [web:625]
+
+    # --- Big Mac hero image ---
+    st.image(str(HERO_IMG), width="stretch")
+
+    st.write("")  # spacing [web:625]
+
+    # --- Second paragraph ---
+    st.markdown(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+    )
+
+    st.write("")  # spacing [web:625]
+
 
     #st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
     st.image(str(HERO_IMG), width="stretch")
@@ -213,6 +245,27 @@ def main():
     # raw data option
     if st.checkbox("Show raw data for selected date"):
         st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
+
+    st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
+
+    # Plotly choropleth using ISO-3 codes (iso_a3)
+    map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
+
+    fig_map = px.choropleth(
+        map_df,
+        locations="iso_a3",
+        color=base_currency,
+        hover_name="name",
+        hover_data={"adjusted": ":.2%"},
+        color_continuous_scale="RdBu",
+        range_color=(-0.6, 0.6),  # tweak later
+    )
+
+    fig_map.update_layout(
+        margin=dict(l=0, r=0, t=0, b=0),
+    )
+    st.plotly_chart(fig_map, use_container_width=True)
+
 
 if __name__ == "__main__":
     main()
