@@ -20,12 +20,12 @@ def load_data():
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values(['date', 'name'])
 
-# Calculate dollar price
+# dollar price
 def calc_dollar_price(df):
     df['dollar_price'] = df['local_price'] / df['dollar_ex']
     return df
 
-# Calculate raw Big Mac index relative to base currencies
+# raw Big Mac index relative to base currencies
 def calc_raw_index(df, big_mac_countries, base_currencies):
     df = df[df['iso_a3'].isin(big_mac_countries)].copy()
     df = df[~df['dollar_price'].isna()]
@@ -78,7 +78,7 @@ def main():
 
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
-    st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
+    #st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
     st.image(str(HERO_IMG), width="stretch")
 
     st.title("Interactive Big Mac Index Dashboard")
