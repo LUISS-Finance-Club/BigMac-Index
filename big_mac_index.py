@@ -334,9 +334,9 @@ def main():
         color=base_currency,
         hover_name="name",  # big country name at top
         hover_data={
-            "iso_a3": False,                 # hide ISO code from tooltip
-            base_currency: ":.1%",           # show as percent, 1 decimal
-            "adjusted": (":.1%", "GDP‑adjusted misvaluation"),  # optional
+            "iso_a3": False,       # hide ISO code from tooltip
+            base_currency: ":.1%", # show raw misvaluation as percent
+            "adjusted": ":.1%",    # GDP‑adjusted misvaluation as percent
         },
         labels={
             base_currency: f"Raw misvaluation vs {base_currency}",
@@ -345,6 +345,7 @@ def main():
         color_continuous_scale=blue_orange,
         color_continuous_midpoint=0,
     )
+
 
 
     # Make sure the whole world is visible + style “no data” countries
