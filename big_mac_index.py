@@ -81,7 +81,7 @@ def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
     # Give the logo column more space
-    col_logo, col_name = st.columns([3, 9], vertical_alignment="center")  # [web:619]
+    col_logo, col_name = st.columns([2, 5], vertical_alignment="center")  # [web:619]
 
     with col_logo:
         b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
