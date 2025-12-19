@@ -332,9 +332,20 @@ def main():
         locations="iso_a3",
         locationmode="ISO-3",
         color=base_currency,
+        hover_name="name",  # big country name at top
+        hover_data={
+            "iso_a3": False,                 # hide ISO code from tooltip
+            base_currency: ":.1%",           # show as percent, 1 decimal
+            "adjusted": (":.1%", "GDP‑adjusted misvaluation"),  # optional
+        },
+        labels={
+            base_currency: f"Raw misvaluation vs {base_currency}",
+            "adjusted": "GDP‑adjusted misvaluation",
+        },
         color_continuous_scale=blue_orange,
         color_continuous_midpoint=0,
     )
+
 
     # Make sure the whole world is visible + style “no data” countries
     fig_map.update_geos(
