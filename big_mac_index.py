@@ -94,7 +94,7 @@ def main():
         <div style="
             font-size:56px;
             font-family: 'Times New Roman', Times, serif;
-            font-weight:700;
+            font-weight:444;
             line-height:1;
             margin-top:-6px;   /* <-- moves text UP (tune this) */
         ">
