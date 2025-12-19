@@ -93,6 +93,7 @@ def main():
         <img src="data:image/png;base64,{logo_b64}" style="width:90px; height:auto;" />
         <div style="
             font-size:56px;
+            font-family: 'Times New Roman', Times, serif;
             font-weight:700;
             line-height:1;
             margin-top:-6px;   /* <-- moves text UP (tune this) */
@@ -212,6 +213,11 @@ def main():
         movers["adj_change"] = movers["adjusted"] - movers["adjusted_prev"]
 
         st.subheader(f"Biggest movers since {prev_date.date()}")
+        st.caption(
+        "Shows the countries whose misvaluation changed the most since the previous release. "
+        "‘Raw’ compares Big Mac dollar prices vs the selected base currency; ‘GDP-adjusted’ controls for income effects."
+    )
+
 
         colA, colB = st.columns(2)
 
@@ -241,6 +247,11 @@ def main():
 
     # plot raw index
     st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
+    st.caption(
+        "This is the classic Big Mac Index: positive bars mean the currency looks overvalued vs the base; "
+        "negative bars mean undervalued. Values are computed from Big Mac prices converted to dollars."
+    )
+
     df_date['overvalued'] = df_date[base_currency] > 0
 
     fig1 = px.bar(df_date, y='name', x=base_currency, color='overvalued',
@@ -252,6 +263,11 @@ def main():
 
     # plot adjusted index
     st.subheader(f"Adjusted Big Mac Index (GDP adjusted) on {selected_date.date()}")
+    st.caption(
+        "The adjusted index accounts for the tendency of richer countries to have higher prices. "
+        "It estimates a ‘fair value’ using the relationship between price levels and GDP per capita."
+    )
+
     df_date['adjusted_overvalued'] = df_date['adjusted'] > 0
 
     fig2 = px.bar(df_date, y='name', x='adjusted', color='adjusted_overvalued',
@@ -263,6 +279,11 @@ def main():
 
     # GDP vs dollar price scatter with regression
     st.subheader("GDP vs Dollar Price with Linear Regression (Log-Log Scale)")
+
+    st.caption(
+        "Each point is a country. The fitted line shows the typical relationship between income (GDP per capita) "
+        "and Big Mac dollar prices; deviations from the line drive the GDP-adjusted misvaluation."
+    )
 
     gdp_df = df[(df['date'] == selected_date) & (df['GDP_local'] > 0) & (df['iso_a3'].isin(regression_countries))]
 
@@ -277,6 +298,11 @@ def main():
         st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
 
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
+    st.caption(
+        "A geographic view of misvaluation for the selected release date. "
+        "Use it to spot regional patterns quickly."
+    )
+
 
     # Plotly choropleth using ISO-3 codes (iso_a3)
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
