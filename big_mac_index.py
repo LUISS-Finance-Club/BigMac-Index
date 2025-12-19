@@ -339,12 +339,23 @@ def main():
             "adjusted": ":.1%",    # GDP‑adjusted misvaluation as percent
         },
         labels={
-            base_currency: f"Raw misvaluation vs {base_currency}",
-            "adjusted": "GDP‑adjusted misvaluation",
+            base_currency: f"Raw misval. vs {base_currency}",
+            "adjusted": "GDP‑adjusted misval.",
         },
         color_continuous_scale=blue_orange,
         color_continuous_midpoint=0,
     )
+    fig_map.update_layout(
+        coloraxis_colorbar=dict(
+            lenmode="fraction",  # length relative to map height
+            len=0.6,             # 60% of map height instead of ~100%
+            thickness=12,        # thinner bar
+            yanchor="middle",
+            y=0.5,
+        ),
+        margin=dict(l=0, r=0, t=0, b=0),
+    )
+
 
 
 
