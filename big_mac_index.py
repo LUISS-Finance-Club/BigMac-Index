@@ -28,6 +28,7 @@ def calc_dollar_price(df):
 
 # raw Big Mac index relative to base currencies
 def calc_raw_index(df, big_mac_countries, base_currencies):
+    df = df[df['iso_a3'].isin(big_mac_countries)].copy()
     df = df[~df['dollar_price'].isna()]
 
     for currency in base_currencies:
