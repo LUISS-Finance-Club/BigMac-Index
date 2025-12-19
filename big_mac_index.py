@@ -344,7 +344,12 @@ def main():
         },
         color_continuous_scale=blue_orange,
         color_continuous_midpoint=0,
+        
     )
+
+    fig_map.update_coloraxes(showscale=False)
+
+
     fig_map.update_layout(
         coloraxis_colorbar=dict(
             lenmode="fraction",  # length relative to map height
