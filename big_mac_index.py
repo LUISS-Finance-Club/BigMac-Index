@@ -190,24 +190,24 @@ def main():
         format_func=lambda d: pd.Timestamp(d).strftime("%b %Y"),  # e.g., "May 2003"
     )
     selected_date = pd.to_datetime(selected_date)
-    
+
     """
     # --- Date slider across all releases ---
-    all_dates = sorted(df["date"].dropna().unique())
-    min_date = pd.to_datetime(all_dates[0]).to_pydatetime()
-    max_date = pd.to_datetime(all_dates[-1]).to_pydatetime()
+    #all_dates = sorted(df["date"].dropna().unique())
+    #min_date = pd.to_datetime(all_dates[0]).to_pydatetime()
+    #max_date = pd.to_datetime(all_dates[-1]).to_pydatetime()
 
-    selected_date = st.sidebar.slider(
-        "Select release date",
-        min_value=min_date,
-        max_value=max_date,
-        value=max_date,
-        format="YYYY-MM-DD",
-    )
+    #selected_date = st.sidebar.slider(
+        #"Select release date",
+        #min_value=min_date,
+        #max_value=max_date,
+        #value=max_date,
+        #format="YYYY-MM-DD",
+    #)
 
     # Snap slider value to the closest available release date in the dataset
-    selected_date = pd.to_datetime(selected_date)
-    selected_date = df.loc[df["date"] <= selected_date, "date"].max()
+    #selected_date = pd.to_datetime(selected_date)
+    #selected_date = df.loc[df["date"] <= selected_date, "date"].max()
     """
 
     # base currency selector with default USD
@@ -323,6 +323,17 @@ def main():
 
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
     map_df = df_date.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
+
+    blue_orange = ["#1f77b4", "#e6f2ff", "#fff2e6", "#ff7f0e"]
+
+    fig_map = px.choropleth(
+        map_df,
+        locations="iso_a3",
+        locationmode="ISO-3",
+        color=base_currency,
+        color_continuous_scale=blue_orange,
+        color_continuous_midpoint=0,
+    )
 
 
     fig_map = px.choropleth(
