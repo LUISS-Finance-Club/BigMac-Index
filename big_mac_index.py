@@ -191,7 +191,6 @@ def main():
     )
     selected_date = pd.to_datetime(selected_date)
 
-    """
     # --- Date slider across all releases ---
     #all_dates = sorted(df["date"].dropna().unique())
     #min_date = pd.to_datetime(all_dates[0]).to_pydatetime()
@@ -208,7 +207,6 @@ def main():
     # Snap slider value to the closest available release date in the dataset
     #selected_date = pd.to_datetime(selected_date)
     #selected_date = df.loc[df["date"] <= selected_date, "date"].max()
-    """
 
     # base currency selector with default USD
     base_currency = st.sidebar.selectbox("Select Base Currency", options=base_currencies, index=base_currencies.index('USD'))
