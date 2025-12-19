@@ -344,22 +344,21 @@ def main():
         },
         color_continuous_scale=blue_orange,
         color_continuous_midpoint=0,
-        
     )
-
-    fig_map.update_coloraxes(showscale=False)
-
 
     fig_map.update_layout(
         coloraxis_colorbar=dict(
-            lenmode="fraction",  # length relative to map height
-            len=0.6,             # 60% of map height instead of ~100%
-            thickness=12,        # thinner bar
-            yanchor="middle",
-            y=0.5,
+            orientation="h",   # horizontal
+            x=0.5,             # center of the plot (0 = left, 1 = right)
+            xanchor="center",
+            y=-0.15,           # a bit below the map; tweak if needed
+            yanchor="top",
+            lenmode="fraction",
+            len=0.7,           # 70% of width
+            thickness=15,      # height of the bar
         ),
-        margin=dict(l=0, r=0, t=0, b=0),
     )
+
 
 
 
