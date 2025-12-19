@@ -80,21 +80,30 @@ import streamlit as st
 def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
-    # Give the logo column more space
-    col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # [web:619]
+    logo_b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
 
-    with col_logo:
-        b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
-        st.markdown(
-            f"""
-            <img src="data:image/png;base64,{b64}"
-                 style="width:220px; height:auto;" />
-            """,
-            unsafe_allow_html=True,
-        )
+    st.markdown(
+        f"""
+        <div style="
+            display:flex;
+            align-items:center;
+            gap:18px;
+            padding: 10px 0 4px 0;
+        ">
+        <img src="data:image/png;base64,{logo_b64}" style="width:90px; height:auto;" />
+        <div style="
+            font-size:56px;
+            font-weight:700;
+            line-height:1;
+            margin-top:-6px;   /* <-- moves text UP (tune this) */
+        ">
+            LUISS Finance Club
+        </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
-    with col_name:
-        st.markdown("## LUISS Finance Club")
 
     st.write("")
     st.markdown("Lorem ipsum ...")
