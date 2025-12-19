@@ -335,17 +335,6 @@ def main():
         color_continuous_midpoint=0,
     )
 
-
-    fig_map = px.choropleth(
-        map_df,
-        locations="iso_a3",
-        locationmode="ISO-3",
-        color=base_currency,
-        hover_name="name",
-        hover_data={"adjusted": ":.2%"},
-        color_continuous_scale="RdBu",
-    )
-
     # Make sure the whole world is visible + style “no data” countries
     fig_map.update_geos(
         scope="world",
