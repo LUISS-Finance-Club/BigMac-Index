@@ -80,7 +80,7 @@ def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
     # --- Club header (logo + name) ---
-    col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
+    col_logo, col_name = st.columns([1, 20], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
     with col_logo:
         st.image(str(LFC_LOGO), width=444)
     with col_name:
