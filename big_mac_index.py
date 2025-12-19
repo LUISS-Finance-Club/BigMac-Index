@@ -297,29 +297,32 @@ def main():
         st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
 
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
-    st.caption(
-        "A geographic view of misvaluation for the selected release date. "
-        "Use it to spot regional patterns quickly."
-    )
+    st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
 
-
-    # Plotly choropleth using ISO-3 codes (iso_a3)
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
 
     fig_map = px.choropleth(
         map_df,
         locations="iso_a3",
+        locationmode="ISO-3",
         color=base_currency,
         hover_name="name",
         hover_data={"adjusted": ":.2%"},
         color_continuous_scale="RdBu",
-        range_color=(-0.6, 0.6),  # tweak later
     )
 
-    fig_map.update_layout(
-        margin=dict(l=0, r=0, t=0, b=0),
+    # Make sure the whole world is visible + style “no data” countries
+    fig_map.update_geos(
+        scope="world",
+        showcoastlines=True,
+        showcountries=True,
+        showland=True,
+        landcolor="#2A3246",   # <- “no data” countries
     )
+    fig_map.update_layout(margin=dict(l=0, r=0, t=0, b=0))
+
     st.plotly_chart(fig_map, use_container_width=True)
+
 
 
 if __name__ == "__main__":
