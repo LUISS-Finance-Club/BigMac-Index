@@ -27,30 +27,22 @@ def calc_dollar_price(df):
     return df
 
 # raw Big Mac index relative to base currencies
-def calc_raw_index(df, big_mac_countries, base_currencies):
-    df = df[df["iso_a3"].isin(big_mac_countries)].copy()
+def calc_raw_index(df, base_currencies):
     df = df[~df["dollar_price"].isna()].copy()
 
-    base_country = {
-        "USD": "USA",
-        "EUR": "EUZ",   # or "ITA"/"DEU" if you prefer a single country
-        "GBP": "GBR",
-        "JPY": "JPN",
-        "CNY": "CHN",
-    }
-
     for currency in base_currencies:
-        iso = base_country[currency]
         base_prices = (
-            df[df["iso_a3"] == iso][["date", "dollar_price"]]
+            df[df["currency_code"] == currency][["date", "dollar_price"]]
             .rename(columns={"dollar_price": "base_price"})
         )
-
         df = df.merge(base_prices, on="date", how="left")
         df[currency] = (df["dollar_price"] / df["base_price"]) - 1
         df.drop(columns=["base_price"], inplace=True)
 
+    # Important: rows where the chosen base isn't available that date will have NaN
+    df[base_currencies] = df[base_currencies].round(5)
     return df
+
 
 
 # adjusted index by regressing GDP_local on dollar_price and adjusting residuals
@@ -167,7 +159,7 @@ def main():
 
     df = load_data()
     df = calc_dollar_price(df)
-    df = calc_raw_index(df, big_mac_countries, base_currencies)
+    df = calc_raw_index(df, base_currencies)
     df = calc_adjusted_index(df, regression_countries)
 
     # date
