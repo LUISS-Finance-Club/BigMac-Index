@@ -74,27 +74,33 @@ regression_countries = ['ARG', 'AUS', 'BRA', 'GBR', 'CAN', 'CHL', 'CHN', 'CZE', 
 
 base_currencies = ['USD', 'EUR', 'GBP', 'JPY', 'CNY']
 
-def main():
-    import streamlit as st
+import base64
+import streamlit as st
 
+def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
-    # --- Club header (logo + name) ---
-    col_logo, col_name = st.columns([1, 10], vertical_alignment="center")  # requires newer Streamlit; if it errors, remove vertical_alignment
-        import base64
+    # Give the logo column more space
+    col_logo, col_name = st.columns([3, 9], vertical_alignment="center")  # [web:619]
 
     with col_logo:
         b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
         st.markdown(
             f"""
             <img src="data:image/png;base64,{b64}"
-                style="width:222px; height:auto; image-rendering:auto;" />
+                 style="width:220px; height:auto;" />
             """,
             unsafe_allow_html=True,
         )
 
     with col_name:
         st.markdown("## LUISS Finance Club")
+
+    st.write("")
+    st.markdown("Lorem ipsum ...")
+    st.write("")
+    st.image(str(HERO_IMG), width="stretch")
+
 
     st.write("")  # spacing [web:625]
 
