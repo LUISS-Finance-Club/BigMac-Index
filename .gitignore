@@ -1,1 +1,23 @@
+# Python bytecode / caches
+__pycache__/
+*.py[cod]
+*.pyd
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# OS junk
+.DS_Store
+
+# Editors/IDEs
+.vscode/
+.idea/
+
+# Streamlit secrets (never commit)
+.streamlit/secrets.toml
 
