@@ -3,5 +3,5 @@ Inspired by The Economist's BigMac Index, this is an ineractive dashboard develo
 
 I had the idea in my Macroeconomics class last year, when I found out about it during the first few weeks. Live and still being improved, accessible here:
 
-Contributer(s):
+Contributor(s):
 - Yasemin Ateş
