@@ -106,13 +106,21 @@ def main():
 
 
     st.write("")
-    st.markdown("Lorem ipsum ...")
+    st.markdown("orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
+    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
+    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
+    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
+    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit.")
     st.write("")
 
     st.write("")  # spacing [web:625]
+    st.write("")  # spacing [web:625]
+
 
     # --- Intro paragraph ---
     st.markdown(
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
+        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
         "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
         "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
     )
