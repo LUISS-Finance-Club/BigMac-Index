@@ -102,10 +102,28 @@ def main():
     year_to_dates = {year: df[df['date'].dt.year == year]['date'].unique() for year in years}
 
     # year in sidebar
-    selected_year = st.sidebar.selectbox("Select Year", options=years, index=len(years)-1)
-
+    #selected_year = st.sidebar.selectbox("Select Year", options=years, index=len(years)-1)
     # from selected year, select a specific date (e.g. latest date in that year)
-    selected_date = year_to_dates[selected_year][-1]  # last date in that year
+    #selected_date = year_to_dates[selected_year][-1]  # last date in that year
+
+    # --- Date slider across all releases ---
+    all_dates = sorted(df["date"].dropna().unique())
+    min_date = pd.to_datetime(all_dates[0]).to_pydatetime()
+    max_date = pd.to_datetime(all_dates[-1]).to_pydatetime()
+
+    selected_date = st.sidebar.slider(
+        "Select release date",
+        min_value=min_date,
+        max_value=max_date,
+        value=max_date,
+        format="YYYY-MM-DD",
+    )
+
+    # Snap slider value to the closest available release date in the dataset
+    selected_date = pd.to_datetime(selected_date)
+    selected_date = df.loc[df["date"] <= selected_date, "date"].max()
+
+
 
 
     # base currency selector with default USD
@@ -114,6 +132,50 @@ def main():
     # Filter dataframe for the selected date
     df_date = df[df['date'] == selected_date].copy()
     df_date = df_date.sort_values(by=base_currency)
+
+    # --- Momentum: biggest movers vs previous release ---
+    prev_date = df.loc[df["date"] < selected_date, "date"].max()
+
+    if pd.isna(prev_date):
+        st.info("No previous release date available to compute momentum.")
+    else:
+        df_prev = df[df["date"] == prev_date][["iso_a3", base_currency, "adjusted"]].copy()
+
+        movers = (
+            df_date[["name", "iso_a3", base_currency, "adjusted"]]
+            .merge(df_prev, on="iso_a3", suffixes=("", "_prev"), how="inner")
+        )
+
+        movers["raw_change"] = movers[base_currency] - movers[f"{base_currency}_prev"]
+        movers["adj_change"] = movers["adjusted"] - movers["adjusted_prev"]
+
+        st.subheader(f"Biggest movers since {prev_date.date()}")
+
+        colA, colB = st.columns(2)
+
+        # Top raw movers
+        top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
+        with colA:
+            st.caption(f"Raw vs {base_currency}")
+            for _, r in top_raw.iterrows():
+                st.metric(
+                    label=r["name"],
+                    value=f"{r[base_currency]:+.2%}",
+                    delta=f"{r['raw_change']:+.2%}",
+                    border=True,
+                )
+
+        # Top adjusted movers
+        top_adj = movers.reindex(movers["adj_change"].abs().sort_values(ascending=False).index).head(5)
+        with colB:
+            st.caption("GDP-adjusted")
+            for _, r in top_adj.iterrows():
+                st.metric(
+                    label=r["name"],
+                    value=f"{r['adjusted']:+.2%}",
+                    delta=f"{r['adj_change']:+.2%}",
+                    border=True,
+                )
 
     # plot raw index
     st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
