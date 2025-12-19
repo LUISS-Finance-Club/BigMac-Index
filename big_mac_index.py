@@ -178,7 +178,20 @@ def main():
     #selected_year = st.sidebar.selectbox("Select Year", options=years, index=len(years)-1)
     # from selected year, select a specific date (e.g. latest date in that year)
     #selected_date = year_to_dates[selected_year][-1]  # last date in that year
-"""
+
+    # --- Release selector (Month Year, no day) ---
+    all_dates = sorted(df["date"].dropna().unique())
+    all_dates = [pd.Timestamp(d).to_pydatetime() for d in all_dates]
+
+    selected_date = st.sidebar.select_slider(
+        "Select release date",
+        options=all_dates,
+        value=all_dates[-1],
+        format_func=lambda d: pd.Timestamp(d).strftime("%b %Y"),  # e.g., "May 2003"
+    )
+    selected_date = pd.to_datetime(selected_date)
+    
+    """
     # --- Date slider across all releases ---
     all_dates = sorted(df["date"].dropna().unique())
     min_date = pd.to_datetime(all_dates[0]).to_pydatetime()
@@ -195,22 +208,7 @@ def main():
     # Snap slider value to the closest available release date in the dataset
     selected_date = pd.to_datetime(selected_date)
     selected_date = df.loc[df["date"] <= selected_date, "date"].max()
-"""
-
-   # --- Release selector (Month Year, no day) ---
-    all_dates = sorted(df["date"].dropna().unique())
-    all_dates = [pd.Timestamp(d).to_pydatetime() for d in all_dates]
-
-    selected_date = st.sidebar.select_slider(
-        "Select release date",
-        options=all_dates,
-        value=all_dates[-1],
-        format_func=lambda d: pd.Timestamp(d).strftime("%b %Y"),  # e.g., "May 2003"
-    )
-    selected_date = pd.to_datetime(selected_date)
-
-
-
+    """
 
     # base currency selector with default USD
     base_currency = st.sidebar.selectbox("Select Base Currency", options=base_currencies, index=base_currencies.index('USD'))
