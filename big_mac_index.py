@@ -31,17 +31,21 @@ def calc_raw_index(df, base_currencies):
     df = df[~df["dollar_price"].isna()].copy()
 
     for currency in base_currencies:
+        # one base price per date (prevents merge row explosion)
         base_prices = (
-            df[df["currency_code"] == currency][["date", "dollar_price"]]
-            .rename(columns={"dollar_price": "base_price"})
+            df.loc[df["currency_code"] == currency, ["date", "dollar_price"]]
+              .groupby("date", as_index=False)["dollar_price"]
+              .mean()
+              .rename(columns={"dollar_price": "base_price"})
         )
+
         df = df.merge(base_prices, on="date", how="left")
         df[currency] = (df["dollar_price"] / df["base_price"]) - 1
         df.drop(columns=["base_price"], inplace=True)
 
-    # Important: rows where the chosen base isn't available that date will have NaN
     df[base_currencies] = df[base_currencies].round(5)
     return df
+
 
 
 
@@ -160,6 +164,7 @@ def main():
     df = load_data()
     df = calc_dollar_price(df)
     df = calc_raw_index(df, base_currencies)
+    st.write("Rows after raw index:", len(df), "unique countries:", df["iso_a3"].nunique())
     df = calc_adjusted_index(df, regression_countries)
 
     # date
@@ -306,6 +311,8 @@ def main():
     st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
 
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
+    map_df = df_date.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
+
 
     fig_map = px.choropleth(
         map_df,
