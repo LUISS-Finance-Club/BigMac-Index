@@ -219,6 +219,51 @@ def main():
     df_date = df[df['date'] == selected_date].copy()
     df_date = df_date.sort_values(by=base_currency)
 
+    # --- Country snapshot (for selected date & base) ---
+    country = st.selectbox(
+        "Country snapshot",
+        options=df_date["name"].sort_values().unique(),
+    )
+
+    country_row = df_date[df_date["name"] == country].iloc[0]
+
+    col1, col2, col3, col4 = st.columns(4)
+
+    with col1:
+        st.metric(
+            label="Local Big Mac price",
+            value=f"{country_row['local_price']:.2f} {country_row['currency_code']}",
+            help="Menu price in local currency on the selected release date.",
+            border=True,
+        )
+
+    with col2:
+        st.metric(
+            label="Dollar price",
+            value=f"${country_row['dollar_price']:.2f}",
+            help="Local price converted using the market exchange rate.",
+            border=True,
+        )
+
+    with col3:
+        st.metric(
+            label=f"Raw vs {base_currency}",
+            value=f"{country_row[base_currency]:+.1%}",
+            help=f"Big Mac misvaluation relative to {base_currency} (classic index).",
+            border=True,
+        )
+
+    with col4:
+        st.metric(
+            label="GDP‑adjusted",
+            value=f"{country_row['adjusted']:+.1%}",
+            help="Misvaluation after controlling for income (GDP per capita).",
+            border=True,
+        )
+
+    st.write("")  # small spacer before 'Biggest movers'
+
+
     # --- Momentum: biggest movers vs previous release ---
     prev_date = df.loc[df["date"] < selected_date, "date"].max()
 
