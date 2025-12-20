@@ -368,38 +368,41 @@ def main():
 
 
         # Top adjusted movers
-        top_adj = movers.reindex(movers["adj_change"].abs().sort_values(ascending=False).index).head(5)
-        with colB:
-            st.caption("GDP-adjusted")
-            RAW_ORANGE = "#ff914d"
-            RAW_BLUE   = "#4284ce"
+        top_adj = movers.reindex(
+        movers["adj_change"].abs().sort_values(ascending=False).index
+    ).head(5)
 
-            for _, r in top_raw.iterrows():
-                value = r[base_currency]
-                delta = r["raw_change"]
+    with colB:
+        st.caption("GDP-adjusted")
+        RAW_ORANGE = "#ff914d"
+        RAW_BLUE = "#4284ce"
 
-                color = RAW_ORANGE if delta < 0 else RAW_BLUE
-                sign  = "+" if delta >= 0 else ""
+        for _, r in top_adj.iterrows():
+            value = r["adjusted"]
+            delta = r["adj_change"]
+            color = RAW_ORANGE if delta < 0 else RAW_BLUE
+            sign = "+" if delta >= 0 else ""
 
-                st.markdown(
-                    f"""
-                    <div style="
-                        border-radius: 10px;
-                        padding: 14px 18px;
-                        margin-bottom: 8px;
-                        background-color: #111827;
-                    ">
-                    <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
-                    <div style="font-size:28px; font-weight:600; margin-top:4px;">
-                        {value:+.2%}
-                    </div>
-                    <div style="font-size:13px; margin-top:2px; color:{color};">
-                        {sign}{delta:.2%}
-                    </div>
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
+            st.markdown(
+                f"""
+                <div style="
+                    border-radius: 10px;
+                    padding: 14px 18px;
+                    margin-bottom: 8px;
+                    background-color: #111827;
+                ">
+                <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
+                <div style="font-size:28px; font-weight:600; margin-top:4px;">
+                    {value:+.2%}
+                </div>
+                <div style="font-size:13px; margin-top:2px; color:{color};">
+                    {sign}{delta:.2%}
+                </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
+
 
     # plot raw index
     st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
