@@ -102,6 +102,16 @@ import streamlit as st
 def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
+    # Disable browser‑level pinch zoom on mobile
+    st.markdown(
+        """
+        <meta name="viewport"
+              content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        """,
+        unsafe_allow_html=True,
+    )
+
+
     logo_b64 = base64.b64encode(LFC_LOGO.read_bytes()).decode()
 
     st.markdown(
@@ -544,7 +554,16 @@ def main():
     )
     fig_map.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
-    st.plotly_chart(fig_map, use_container_width=True)
+    st.plotly_chart(
+        fig_map,
+        use_container_width=True,
+        config={
+            "scrollZoom": True,
+            "displayModeBar": True,
+            "doubleClick": "reset",
+        },
+    )
+
 
 
 
