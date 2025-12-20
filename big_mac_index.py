@@ -358,9 +358,18 @@ def main():
                     <div style="font-size:28px; font-weight:600; margin-top:4px;">
                         {value:+.2%}
                     </div>
-                    <div style="font-size:13px; margin-top:2px; color:{color};">
+                    <div style="
+                        display:inline-block;
+                        margin-top:8px;
+                        padding:2px 10px;
+                        border-radius:999px;
+                        font-size:13px;
+                        color:{color};
+                        background-color:rgba(255,255,255,0.06);
+                    ">
                         {sign}{delta:.2%}
                     </div>
+
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -395,9 +404,18 @@ def main():
                 <div style="font-size:28px; font-weight:600; margin-top:4px;">
                     {value:+.2%}
                 </div>
-                <div style="font-size:13px; margin-top:2px; color:{color};">
+                <div style="
+                    display:inline-block;
+                    margin-top:8px;
+                    padding:2px 10px;
+                    border-radius:999px;
+                    font-size:13px;
+                    color:{color};
+                    background-color:rgba(255,255,255,0.06);
+                ">
                     {sign}{delta:.2%}
                 </div>
+
                 </div>
                 """,
                 unsafe_allow_html=True,
