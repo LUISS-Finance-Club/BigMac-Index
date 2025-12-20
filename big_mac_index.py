@@ -21,13 +21,14 @@ def load_data():
     df = df.dropna(subset=['local_price'])
 
     # Handle Economist full-index file: GDP_dollar instead of GDP_local
-    if 'GDP_local' not in df.columns and 'GDP_dollar' in df.columns:
-        df['GDP_local'] = pd.to_numeric(df['GDP_dollar'], errors='coerce')
+    if "GDP_local" not in df.columns and "GDP_dollar" in df.columns:
+        df["GDP_local"] = pd.to_numeric(df["GDP_dollar"], errors="coerce")
     else:
-        df['GDP_local'] = pd.to_numeric(df['GDP_local'], errors='coerce')
+        df["GDP_local"] = pd.to_numeric(df["GDP_local"], errors="coerce")
 
-    df['date'] = pd.to_datetime(df['date'])
-    return df.sort_values(['date', 'name'])
+    df["date"] = pd.to_datetime(df["date"])
+    return df.sort_values(["date", "name"])
+
 
 # dollar price
 def calc_dollar_price(df):
