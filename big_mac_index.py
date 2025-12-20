@@ -19,7 +19,13 @@ INTRO_IMG  = APP_DIR / "vis/1.jpg"
 def load_data():
     df = pd.read_csv(DATA_PATH, na_values=['#N/A'])
     df = df.dropna(subset=['local_price'])
-    df['GDP_local'] = pd.to_numeric(df['GDP_local'], errors='coerce')
+
+    # Handle Economist full-index file: GDP_dollar instead of GDP_local
+    if 'GDP_local' not in df.columns and 'GDP_dollar' in df.columns:
+        df['GDP_local'] = pd.to_numeric(df['GDP_dollar'], errors='coerce')
+    else:
+        df['GDP_local'] = pd.to_numeric(df['GDP_local'], errors='coerce')
+
     df['date'] = pd.to_datetime(df['date'])
     return df.sort_values(['date', 'name'])
 
