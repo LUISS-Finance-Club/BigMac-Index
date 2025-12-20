@@ -323,7 +323,8 @@ def main():
         movers["raw_change"] = movers[base_currency] - movers[f"{base_currency}_prev"]
         movers["adj_change"] = movers["adjusted"] - movers["adjusted_prev"]
 
-        st.subheader(f"Biggest movers since {prev_date.date()}")
+        prev_label = pd.Timestamp(prev_date).strftime("%b %Y")  # e.g., "Jul 2024"
+        st.subheader(f"Biggest movers since {prev_label}")
         st.caption(
         "Shows the countries whose misvaluation changed the most since the previous release. "
         "‘Raw’ compares Big Mac dollar prices vs the selected base currency; ‘GDP-adjusted’ controls for income effects."
@@ -337,24 +338,37 @@ def main():
         with colA:
             st.caption(f"Raw vs {base_currency}")
             for _, r in top_raw.iterrows():
+                delta_val = r["raw_change"]
+                delta_color = "#ff914d" if delta_val < 0 else "#4284ce"
+                delta_html = f"<span style='color:{delta_color}'>{delta_val:+.2%}</span>"
+
                 st.metric(
                     label=r["name"],
                     value=f"{r[base_currency]:+.2%}",
-                    delta=f"{r['raw_change']:+.2%}",
+                    delta=None,
+                    help=None,
                     border=True,
                 )
+                st.markdown(delta_html, unsafe_allow_html=True)
+
 
         # Top adjusted movers
         top_adj = movers.reindex(movers["adj_change"].abs().sort_values(ascending=False).index).head(5)
         with colB:
             st.caption("GDP-adjusted")
-            for _, r in top_adj.iterrows():
+            for _, r in top_raw.iterrows():
+                delta_val = r["raw_change"]
+                delta_color = "#ff914d" if delta_val < 0 else "#4284ce"
+                delta_html = f"<span style='color:{delta_color}'>{delta_val:+.2%}</span>"
+
                 st.metric(
                     label=r["name"],
-                    value=f"{r['adjusted']:+.2%}",
-                    delta=f"{r['adj_change']:+.2%}",
+                    value=f"{r[base_currency]:+.2%}",
+                    delta=None,
+                    help=None,
                     border=True,
                 )
+                st.markdown(delta_html, unsafe_allow_html=True)
 
     # plot raw index
     st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
