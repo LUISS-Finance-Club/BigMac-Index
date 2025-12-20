@@ -182,7 +182,13 @@ def main():
     #df = calc_adjusted_index(df, regression_countries)
 
     # Use Economist's official GDP-adjusted index for the selected base
-    base_currency = st.sidebar.selectbox(...)
+    base_currency = st.sidebar.selectbox(
+        "Select Base Currency",
+        options=base_currencies,
+        index=base_currencies.index("USD"),
+        )    
+    
+    # Economist's official adjusted index for the chosen base
     adjusted_col = f"{base_currency}_adjusted"
     if adjusted_col in df.columns:
         df["adjusted"] = df[adjusted_col]
