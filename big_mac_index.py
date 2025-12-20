@@ -573,6 +573,30 @@ def main():
     )
     st.markdown("</div>", unsafe_allow_html=True)
 
+    st.write("")  # small spacer
+
+    # --- Stats for nerds ---
+    with st.expander("Stats for nerds"):
+        col_a, col_b = st.columns(2)
+
+        with col_a:
+            st.markdown("**Selected snapshot**")
+            st.write(f"Release date: {selected_date.date()}")
+            st.write(f"Base currency: {base_currency}")
+            st.write(f"Country: {country_row['name']} ({country_row['iso_a3']})")
+            st.write(f"Market FX rate: 1 {country_row['currency_code']} = "
+                     f"{country_row['dollar_price'] / country_row['local_price']:.4f} USD")
+
+        with col_b:
+            st.markdown("**Index breakdown**")
+            st.write(f"Implied PPP FX vs {base_currency}: "
+                     f"{(1 + country_row[base_currency]):.4f} (Big Mac–based)")
+            st.write(f"Raw misvaluation vs {base_currency}: "
+                     f"{country_row[base_currency]:+.2%}")
+            st.write(f"GDP‑adjusted misvaluation: {country_row['adjusted']:+.2%}")
+            st.write(f"Local Big Mac price in USD: ${country_row['dollar_price']:.2f}")
+
+
 
 
 
