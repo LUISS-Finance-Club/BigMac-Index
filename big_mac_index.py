@@ -220,10 +220,25 @@ def main():
     df_date = df_date.sort_values(by=base_currency)
 
     # --- Country snapshot (for selected date & base) ---
+    # --- Country snapshot (persists across year changes) ---
+    available_countries = df_date["name"].sort_values().unique()
+
+    # Initialize session_state the first time
+    if "selected_country" not in st.session_state:
+        st.session_state.selected_country = available_countries[0]
+
+    # If previously selected country is not in this date's list, fall back to first
+    if st.session_state.selected_country not in available_countries:
+        st.session_state.selected_country = available_countries[0]
+
     country = st.selectbox(
         "Country snapshot",
-        options=df_date["name"].sort_values().unique(),
+        options=available_countries,
+        index=list(available_countries).index(st.session_state.selected_country),
     )
+
+    # Update state with any new choice
+    st.session_state.selected_country = country
 
     country_row = df_date[df_date["name"] == country].iloc[0]
 
@@ -260,6 +275,13 @@ def main():
             help="Misvaluation after controlling for income (GDP per capita).",
             border=True,
         )
+
+    st.caption(
+        "Explained: The local Big Mac price is converted to dollars using the market exchange rate to get the dollar price. "
+        "The raw index compares this dollar price to the price implied by the selected base currency. "
+        "The GDP-adjusted index accounts for the tendency of richer countries to have higher prices, "
+        "estimating a 'fair value' using the relationship between price levels and GDP per capita."
+    )
 
     st.write("")  # small spacer before 'Biggest movers'
 
