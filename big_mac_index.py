@@ -142,6 +142,7 @@ def main():
 
     # --- Big Mac hero image ---
     st.image(str(HERO_IMG), width="stretch")
+    st.caption("Graphics by LUISS Finance Club")
 
     st.write("")  # spacing [web:625]
 
@@ -278,7 +279,7 @@ def main():
 
     fig1 = px.bar(df_date, y='name', x=base_currency, color='overvalued',
                   labels={'name': 'Country', base_currency: 'Index Value'},
-                  color_discrete_map={True: "#ff7217", False: "#4284ce"},
+                  color_discrete_map={True: "#ff914d", False: "#4284ce"},
                   orientation='h')
     fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
@@ -294,7 +295,7 @@ def main():
 
     fig2 = px.bar(df_date, y='name', x='adjusted', color='adjusted_overvalued',
                   labels={'name': 'Country', 'adjusted': 'Adjusted Index Value'},
-                  color_discrete_map={True: "#ff7217", False: "#4284ce"},  # True=orange, False=blue
+                  color_discrete_map={True: "#ff914d", False: "#4284ce"},  # True=orange, False=blue
                   orientation='h')
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
@@ -325,7 +326,7 @@ def main():
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
     map_df = df_date.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
 
-    blue_orange = ["#ff7217", "#ffad76", "#7db8fb", "#4284ce"]
+    blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
 
     fig_map = px.choropleth(
         map_df,
