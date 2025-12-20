@@ -466,6 +466,34 @@ def main():
     # Show euro area as Germany on the map
     df_date_map.loc[df_date_map["iso_a3"] == "EUZ", "iso_a3"] = "DEU"
 
+    EURO_MEMBERS = ["AUT","BEL","DEU","ESP","FIN","FRA","GRC","IRL","ITA",
+                "NLD","PRT","EST"]  # extend if you want newer members
+
+    df_date_map = df_date.copy()
+
+    # Get the euro‑area row for this date (if present)
+    eu_row = df_date_map[df_date_map["iso_a3"] == "EUZ"]
+    if not eu_row.empty:
+        eu_val = eu_row.iloc[0]
+
+        # Build replicated rows, one per member
+        replicas = []
+        for code in EURO_MEMBERS:
+            r = eu_val.copy()
+            r["iso_a3"] = code
+            # keep name as "Euro area" so tooltip is clear
+            replicas.append(r)
+
+        replicas = pd.DataFrame(replicas)
+        # Drop original EUZ row and append replicas
+        df_date_map = pd.concat(
+            [df_date_map[df_date_map["iso_a3"] != "EUZ"], replicas],
+            ignore_index=True,
+        )
+
+map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
+
+
     map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
 
     blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
