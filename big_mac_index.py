@@ -107,12 +107,16 @@ def main():
         <style>
         html, body {
             overscroll-behavior: contain;
-            touch-action: manipulation;  /* allow pan + pinch but no double-tap zoom */
+            touch-action: manipulation;
+        }
+        .map-container {
+            touch-action: pinch-zoom;
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
+
 
 
     # Disable browser‑level pinch zoom on mobile
@@ -485,6 +489,18 @@ def main():
 
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
     st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
+
+    st.markdown('<div class="map-container">', unsafe_allow_html=True)
+    st.plotly_chart(
+        fig_map,
+        use_container_width=True,
+        config={
+            "scrollZoom": True,
+            "displayModeBar": True,
+            "doubleClick": "reset",
+        },
+    )
+    st.markdown('</div>', unsafe_allow_html=True)
 
     df_date_map = df_date.copy()
 
