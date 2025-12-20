@@ -483,118 +483,48 @@ def main():
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
 
-    # raw data option
-    if st.checkbox("Show raw data for selected date"):
-        st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
-
-    st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
-    st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
-
-    st.markdown('<div class="map-container">', unsafe_allow_html=True)
-    st.plotly_chart(
-        fig_map,
-        use_container_width=True,
-        config={
-            "scrollZoom": True,
-            "displayModeBar": True,
-            "doubleClick": "reset",
-        },
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
-    df_date_map = df_date.copy()
-
-    # Show euro area as Germany on the map
-    df_date_map.loc[df_date_map["iso_a3"] == "EUZ", "iso_a3"] = "DEU"
-
-    EURO_MEMBERS = ["AUT","BEL","DEU","ESP","FIN","FRA","GRC","IRL","ITA",
-                "NLD","PRT","EST"]  # extend if you want newer members
-
-    df_date_map = df_date.copy()
-
-    # Get the euro‑area row for this date (if present)
-    eu_row = df_date_map[df_date_map["iso_a3"] == "EUZ"]
-    if not eu_row.empty:
-        eu_val = eu_row.iloc[0]
-
-        # Build replicated rows, one per member
-        replicas = []
-        for code in EURO_MEMBERS:
-            r = eu_val.copy()
-            r["iso_a3"] = code
-            # keep name as "Euro area" so tooltip is clear
-            replicas.append(r)
-
-        replicas = pd.DataFrame(replicas)
-        # Drop original EUZ row and append replicas
-        df_date_map = pd.concat(
-            [df_date_map[df_date_map["iso_a3"] != "EUZ"], replicas],
-            ignore_index=True,
-        )
-
-    map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
-
-
-    blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
-
-    fig_map = px.choropleth(
-        map_df,
-        locations="iso_a3",
-        locationmode="ISO-3",
-        color=base_currency,
-        hover_name="name",  # big country name at top
-        hover_data={
-            "iso_a3": False,       # hide ISO code from tooltip
-            base_currency: ":.1%", # show raw misvaluation as percent
-            "adjusted": ":.1%",    # GDP‑adjusted misvaluation as percent
-        },
-        labels={
-            base_currency: f"Raw misval. vs {base_currency}",
-            "adjusted": "GDP‑adjusted misval.",
-        },
-        color_continuous_scale=blue_orange,
-        color_continuous_midpoint=0,
+        # plot raw index
+    st.subheader(f"Raw Big Mac Index vs {base_currency} on {selected_date.date()}")
+    st.caption(
+        "This is the classic Big Mac Index: positive bars mean the currency looks overvalued vs the base; "
+        "negative bars mean undervalued. Values are computed from Big Mac prices converted to dollars."
     )
 
-    fig_map.update_layout(
-        coloraxis_colorbar=dict(
-            orientation="h",   # horizontal
-            x=0.5,             # center of the plot (0 = left, 1 = right)
-            xanchor="center",
-            y=-0.15,           # a bit below the map; tweak if needed
-            yanchor="top",
-            lenmode="fraction",
-            len=0.7,           # 70% of width
-            thickness=15,      # height of the bar
-        ),
+    df_date["overvalued"] = df_date[base_currency] > 0
+
+    fig1 = px.bar(
+        df_date,
+        y="name",
+        x=base_currency,
+        color="overvalued",
+        labels={"name": "Country", base_currency: "Index Value"},
+        color_discrete_map={True: "#4284ce", False: "#ff914d"},
+        orientation="h",
+    )
+    fig1.update_layout(
+        yaxis={"categoryorder": "total ascending"},
+        xaxis_title="Index (over/undervaluation)",
+        showlegend=False,
+    )
+    st.plotly_chart(fig1, use_container_width=True)
+
+    # plot adjusted index
+    st.subheader(f"Adjusted Big Mac Index (GDP adjusted) on {selected_date.date()}")
+    st.caption(
+        "The adjusted index accounts for the tendency of richer countries to have higher prices. "
+        "It estimates a ‘fair value’ using the relationship between price levels and GDP per capita."
     )
 
+    df_date["adjusted_overvalued"] = df_date["adjusted"] > 0
 
-
-
-
-    # Make sure the whole world is visible + style “no data” countries
-    fig_map.update_geos(
-        scope="world",
-        showcoastlines=True,
-        showcountries=True,
-        showland=True,
-        landcolor="#2A3246",   # <- “no data” countries
+    fig2 = px.bar(
+        df_date,
+        y="name",
+        x="adjusted",
+        color="adjusted_overvalued",
+        labels={"name": "Country", "adjusted": "Adjusted Index Value"},
+        color_discrete_map={True: "#4284ce", False: "#ff914d"},
+        orientation="h",
     )
-    fig_map.update_layout(margin=dict(l=0, r=0, t=0, b=0))
-
-    st.plotly_chart(
-        fig_map,
-        use_container_width=True,
-        config={
-            "scrollZoom": True,
-            "displayModeBar": True,
-            "doubleClick": "reset",
-        },
-    )
-
-
-
-
-if __name__ == "__main__":
-    main()
+    fig2.update_layout(
+        yaxis={"category
