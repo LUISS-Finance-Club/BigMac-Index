@@ -491,10 +491,8 @@ def main():
             ignore_index=True,
         )
 
-map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
-
-
     map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
+
 
     blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
 
