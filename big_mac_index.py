@@ -128,11 +128,10 @@ def main():
 
 
     st.write("")
-    st.markdown("orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
-    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
-    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
-    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit." \
-    "orem ipsum dolor sit amet, consectetur adipiscing elit.orem ipsum dolor sit amet, consectetur adipiscing elit.")
+    st.markdown("" \
+    "This is an interavtive dashboard from the LUISS Finance Club to explore The Economist's Big Mac Index." \
+    "The Big Mac Index is a lighthearted guide to whether currencies are at their 'correct' level. " \
+    "It is based on the theory of purchasing-power parity (PPP), the notion that in the long run exchange rates should move towards the rate that would equalize the prices of an identical basket of goods and services (in this case, a Big Mac) in any two countries. ")
     st.write("")
 
     st.write("")  # spacing [web:625]
@@ -142,10 +141,9 @@ def main():
 
     # --- Intro paragraph ---
     st.markdown(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-        "Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        "Explore currency valuations worldwide using Big Mac prices! "
+        "Select a release date and base currency to see how different currencies compare. "
+        "Dive into raw and GDP-adjusted indices, track biggest movers, and visualize data on a world map."
     )
 
     st.write("")  # spacing [web:625]
@@ -158,8 +156,9 @@ def main():
 
     # --- Second paragraph ---
     st.markdown(
-        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. "
-        "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris."
+        "Developed by the LUISS Finance Club, this dashboard replicates The Economist's Big Mac Index calculations. "
+        "It features both raw and GDP-adjusted indices, allowing users to explore currency valuations in depth. "
+        "Select different release dates and base currencies to see how valuations change over time and across currencies."
     )
 
     st.write("")  # spacing [web:625]
