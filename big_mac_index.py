@@ -10,7 +10,7 @@ from pathlib import Path
 
 APP_DIR = Path(__file__).parent
 DATA_PATH = APP_DIR / "big-mac-source-data-v2.csv"
-HERO_IMG  = APP_DIR / "vis/1.jpg"
+HERO_IMG  = APP_DIR / "vis/Big-Mac-2.png"
 LFC_LOGO = APP_DIR / "vis" / "LFC_Bull_Circle_Blue.png"
 INTRO_IMG  = APP_DIR / "vis/1.jpg"
 
@@ -211,7 +211,7 @@ def main():
     #st.write("Rows after raw index:", len(df), "unique countries:", df["iso_a3"].nunique())
     #df = calc_adjusted_index(df, regression_countries)
 
-    st.sidebar.image(str(HERO_IMG), width="stretch")
+    st.sidebar.image(str(INTRO_IMG), width="stretch")
 
     # --- Release selector (Month Year, no day) ---
     all_dates = sorted(df["date"].dropna().unique())
@@ -579,9 +579,66 @@ def main():
     st.write("")  # small spacer
 
     with st.expander("Stats for nerds"):
+        # ---------- Cross-section stats for this release ----------
+        st.markdown("### Cross‑section snapshot")
+
+        # Misvaluation distribution for this release
+        misvals = df_date[[ "name", "iso_a3", base_currency, "adjusted" ]].copy()
+        misvals["abs_raw"] = misvals[base_currency].abs()
+
+        # Rank of the selected country by raw undervaluation/overvaluation
+        misvals["rank_raw"] = misvals[base_currency].rank(method="min", ascending=True)
+        misvals["rank_abs"] = misvals["abs_raw"].rank(method="min", ascending=False)
+
+        this = misvals[misvals["name"] == country].iloc[0]
+
+        median_raw = misvals[base_currency].median()
+        p10 = misvals[base_currency].quantile(0.10)
+        p90 = misvals[base_currency].quantile(0.90)
+
+        # z‑score of current misvaluation vs cross‑section
+        mean_raw = misvals[base_currency].mean()
+        std_raw = misvals[base_currency].std(ddof=0)
+        if std_raw > 0:
+            z_score = (this[base_currency] - mean_raw) / std_raw
+        else:
+            z_score = np.nan
+
+        num_over = (misvals[base_currency] > 0).sum()
+        num_under = (misvals[base_currency] < 0).sum()
+        total_c = len(misvals)
+
+        col_cs1, col_cs2 = st.columns(2)
+
+        with col_cs1:
+            st.markdown("**Where this country sits today**")
+            st.write(f"Countries this release: {total_c}")
+            st.write(
+                f"Raw misvaluation vs {base_currency}: "
+                f"{this[base_currency]:+.2%} "
+                f"(rank {int(this['rank_abs'])} by magnitude)"
+            )
+            st.write(
+                f"Cross‑section median misvaluation: {median_raw:+.2%} "
+                f"(10th pct: {p10:+.2%}, 90th pct: {p90:+.2%})"
+            )
+            if not np.isnan(z_score):
+                st.write(f"Z‑score of misvaluation: {z_score:+.2f}σ")
+
+        with col_cs2:
+            st.markdown("**Market wide picture**")
+            st.write(f"Overvalued vs {base_currency}: {num_over} of {total_c}")
+            st.write(f"Undervalued vs {base_currency}: {num_under} of {total_c}")
+            st.write(
+                "Rule‑of‑thumb: |misvaluation| ≳ 2σ is a ‘big’ deviation "
+                "from burger‑based parity."
+            )
+
+        st.markdown("---")
+
+        # ---------- Snapshot & raw vs adjusted gap ----------
         col_a, col_b = st.columns(2)
 
-        # Left: current snapshot details
         with col_a:
             st.markdown("**Selected snapshot**")
             st.write(f"Release date: {selected_date.date()}")
@@ -592,13 +649,17 @@ def main():
                 f"{country_row['currency_code']}"
             )
             st.write(f"Dollar price: ${country_row['dollar_price']:.2f}")
+
+            # Implied PPP rate vs base currency (relative to USD)
+            st.markdown("**Raw vs GDP‑adjusted**")
+            raw_val = country_row[base_currency]
+            adj_val = country_row["adjusted"]
+            gap = raw_val - adj_val
+            st.write(f"Raw misvaluation: {raw_val:+.2%}")
+            st.write(f"GDP‑adjusted misvaluation: {adj_val:+.2%}")
             st.write(
-                f"Raw misvaluation vs {base_currency}: "
-                f"{country_row[base_currency]:+.2%}"
-            )
-            st.write(
-                f"GDP‑adjusted misvaluation: "
-                f"{country_row['adjusted']:+.2%}"
+                f"Gap (raw − adjusted): {gap:+.2%} "
+                "(portion explained by income differences vs abnormal pricing)."
             )
 
             # Raw data toggle for THIS release
@@ -620,14 +681,12 @@ def main():
                     use_container_width=True,
                 )
 
-        # Right: time‑travel for this country
+        # ---------- Time travel for this country ----------
         with col_b:
             st.markdown("**Time travel for this country**")
 
-            # All dates where this country appears
             country_history = df[df["name"] == country].sort_values("date")
 
-            # Small line chart: raw & adjusted vs time
             fig_hist = px.line(
                 country_history,
                 x="date",
@@ -648,7 +707,6 @@ def main():
             )
             st.plotly_chart(fig_hist, use_container_width=True)
 
-            # Optional: show numeric history table
             if st.checkbox("Show full time series table", key="raw_time_checkbox"):
                 st.dataframe(
                     country_history[
@@ -656,11 +714,6 @@ def main():
                     ].sort_values("date"),
                     use_container_width=True,
                 )
-
-
-
-
-
 
 
 if __name__ == "__main__":
