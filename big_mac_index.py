@@ -14,17 +14,20 @@ HERO_IMG  = APP_DIR / "vis/Big-Mac-2.png"
 LFC_LOGO = APP_DIR / "vis" / "LFC_Bull_Circle_Blue.png"
 INTRO_IMG  = APP_DIR / "vis/1.jpg"
 
-
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA_PATH, na_values=['#N/A'])
     df = df.dropna(subset=['local_price'])
 
-    # Handle Economist full-index file: GDP_dollar instead of GDP_local
-    if "GDP_local" not in df.columns and "GDP_dollar" in df.columns:
+    # New Economist file: GDP_dollar instead of GDP_local
+    cols = df.columns
+    if "GDP_local" in cols:
+        df["GDP_local"] = pd.to_numeric(df["GDP_local"], errors="coerce")
+    elif "GDP_dollar" in cols:
         df["GDP_local"] = pd.to_numeric(df["GDP_dollar"], errors="coerce")
     else:
-        df["GDP_local"] = pd.to_numeric(df["GDP_local"], errors="coerce")
+        # no GDP column available -> create empty so rest of code still runs
+        df["GDP_local"] = np.nan
 
     df["date"] = pd.to_datetime(df["date"])
     return df.sort_values(["date", "name"])
