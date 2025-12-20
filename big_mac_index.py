@@ -102,6 +102,19 @@ import streamlit as st
 def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
 
+    st.markdown(
+        """
+        <style>
+        html, body {
+            overscroll-behavior: contain;
+            touch-action: manipulation;  /* allow pan + pinch but no double-tap zoom */
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
     # Disable browser‑level pinch zoom on mobile
     st.markdown(
         """
