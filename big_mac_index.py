@@ -360,7 +360,7 @@ def main():
                         {value:+.2%}
                     </div>
                     <div style="font-size:13px; margin-top:2px; color:{color};">
-                        {sign}{delta:.2%} since previous release
+                        {sign}{delta:.2%}
                     </div>
                     </div>
                     """,
@@ -395,7 +395,7 @@ def main():
                         {value:+.2%}
                     </div>
                     <div style="font-size:13px; margin-top:2px; color:{color};">
-                        {sign}{delta:.2%} since previous release
+                        {sign}{delta:.2%}
                     </div>
                     </div>
                     """,
