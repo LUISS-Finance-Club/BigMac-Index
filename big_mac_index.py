@@ -105,17 +105,21 @@ def main():
     st.markdown(
         """
         <style>
+        /* Calm page scrolling */
         html, body {
             overscroll-behavior: contain;
-            touch-action: manipulation;
+            touch-action: pan-y;  /* vertical scroll only */
         }
+
+        /* Let the map capture pinch + pan */
         .map-container {
-            touch-action: pinch-zoom;
+            touch-action: pinch-zoom pan-x pan-y;
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
+
 
 
 
