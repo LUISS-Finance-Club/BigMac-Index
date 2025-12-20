@@ -236,9 +236,6 @@ def main():
     #selected_date = pd.to_datetime(selected_date)
     #selected_date = df.loc[df["date"] <= selected_date, "date"].max()
 
-    # base currency selector with default USD
-    base_currency = st.sidebar.selectbox("Select Base Currency", options=base_currencies, index=base_currencies.index('USD'))
-
     # Filter dataframe for the selected date
     df_date = df[df['date'] == selected_date].copy()
     df_date = df_date.sort_values(by=base_currency)
