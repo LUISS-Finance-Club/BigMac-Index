@@ -483,57 +483,35 @@ def main():
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
 
-    # raw data option
-    if st.checkbox("Show raw data for selected date"):
-        st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
-
+    # ---------------- MAP SECTION ----------------
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
     st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
 
-    st.markdown('<div class="map-container">', unsafe_allow_html=True)
-    st.plotly_chart(
-        fig_map,
-        use_container_width=True,
-        config={
-            "scrollZoom": True,
-            "displayModeBar": True,
-            "doubleClick": "reset",
-        },
-    )
-    st.markdown('</div>', unsafe_allow_html=True)
-
     df_date_map = df_date.copy()
 
-    # Show euro area as Germany on the map
-    df_date_map.loc[df_date_map["iso_a3"] == "EUZ", "iso_a3"] = "DEU"
+    EURO_MEMBERS = [
+        "AUT", "BEL", "DEU", "ESP", "FIN", "FRA", "GRC", "IRL", "ITA",
+        "NLD", "PRT", "EST"
+    ]
 
-    EURO_MEMBERS = ["AUT","BEL","DEU","ESP","FIN","FRA","GRC","IRL","ITA",
-                "NLD","PRT","EST"]  # extend if you want newer members
-
-    df_date_map = df_date.copy()
-
-    # Get the euro‑area row for this date (if present)
+    # Replicate euro area (EUZ) value over member countries if present
     eu_row = df_date_map[df_date_map["iso_a3"] == "EUZ"]
     if not eu_row.empty:
         eu_val = eu_row.iloc[0]
-
-        # Build replicated rows, one per member
         replicas = []
         for code in EURO_MEMBERS:
             r = eu_val.copy()
             r["iso_a3"] = code
-            # keep name as "Euro area" so tooltip is clear
             replicas.append(r)
-
         replicas = pd.DataFrame(replicas)
-        # Drop original EUZ row and append replicas
         df_date_map = pd.concat(
             [df_date_map[df_date_map["iso_a3"] != "EUZ"], replicas],
             ignore_index=True,
         )
 
-    map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
-
+    map_df = df_date_map.dropna(subset=[base_currency])[
+        ["iso_a3", "name", base_currency, "adjusted"]
+    ]
 
     blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
 
@@ -542,11 +520,11 @@ def main():
         locations="iso_a3",
         locationmode="ISO-3",
         color=base_currency,
-        hover_name="name",  # big country name at top
+        hover_name="name",
         hover_data={
-            "iso_a3": False,       # hide ISO code from tooltip
-            base_currency: ":.1%", # show raw misvaluation as percent
-            "adjusted": ":.1%",    # GDP‑adjusted misvaluation as percent
+            "iso_a3": False,
+            base_currency: ":.1%",
+            "adjusted": ":.1%",
         },
         labels={
             base_currency: f"Raw misval. vs {base_currency}",
@@ -558,31 +536,28 @@ def main():
 
     fig_map.update_layout(
         coloraxis_colorbar=dict(
-            orientation="h",   # horizontal
-            x=0.5,             # center of the plot (0 = left, 1 = right)
+            orientation="h",
+            x=0.5,
             xanchor="center",
-            y=-0.15,           # a bit below the map; tweak if needed
+            y=-0.15,
             yanchor="top",
             lenmode="fraction",
-            len=0.7,           # 70% of width
-            thickness=15,      # height of the bar
+            len=0.7,
+            thickness=15,
         ),
+        margin=dict(l=0, r=0, t=0, b=0),
     )
 
-
-
-
-
-    # Make sure the whole world is visible + style “no data” countries
     fig_map.update_geos(
         scope="world",
         showcoastlines=True,
         showcountries=True,
         showland=True,
-        landcolor="#2A3246",   # <- “no data” countries
+        landcolor="#2A3246",
     )
-    fig_map.update_layout(margin=dict(l=0, r=0, t=0, b=0))
 
+    # Wrap map in touch‑tuned container for mobile
+    st.markdown('<div class="map-container">', unsafe_allow_html=True)
     st.plotly_chart(
         fig_map,
         use_container_width=True,
@@ -592,6 +567,8 @@ def main():
             "doubleClick": "reset",
         },
     )
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
