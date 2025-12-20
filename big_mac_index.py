@@ -468,10 +468,6 @@ def main():
 
     map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
 
-
-    map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
-    map_df = df_date.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
-
     blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
 
     fig_map = px.choropleth(
