@@ -461,6 +461,14 @@ def main():
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
     st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
 
+    df_date_map = df_date.copy()
+
+    # Show euro area as Germany on the map
+    df_date_map.loc[df_date_map["iso_a3"] == "EUZ", "iso_a3"] = "DEU"
+
+    map_df = df_date_map.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
+
+
     map_df = df_date[["iso_a3", "name", base_currency, "adjusted"]].copy()
     map_df = df_date.dropna(subset=[base_currency])[["iso_a3", "name", base_currency, "adjusted"]]
 
