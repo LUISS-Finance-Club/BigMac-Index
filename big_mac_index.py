@@ -576,25 +576,87 @@ def main():
     st.write("")  # small spacer
 
     # --- Stats for nerds ---
+    st.write("")  # small spacer
+
     with st.expander("Stats for nerds"):
         col_a, col_b = st.columns(2)
 
+        # Left: current snapshot details
         with col_a:
             st.markdown("**Selected snapshot**")
             st.write(f"Release date: {selected_date.date()}")
             st.write(f"Base currency: {base_currency}")
             st.write(f"Country: {country_row['name']} ({country_row['iso_a3']})")
-            st.write(f"Market FX rate: 1 {country_row['currency_code']} = "
-                     f"{country_row['dollar_price'] / country_row['local_price']:.4f} USD")
+            st.write(
+                f"Local Big Mac price: {country_row['local_price']:.2f} "
+                f"{country_row['currency_code']}"
+            )
+            st.write(f"Dollar price: ${country_row['dollar_price']:.2f}")
+            st.write(
+                f"Raw misvaluation vs {base_currency}: "
+                f"{country_row[base_currency]:+.2%}"
+            )
+            st.write(
+                f"GDP‑adjusted misvaluation: "
+                f"{country_row['adjusted']:+.2%}"
+            )
 
+            # Raw data toggle for THIS release
+            st.markdown("**Raw data for this release**")
+            if st.checkbox("Show raw data for selected date", key="raw_date_checkbox"):
+                st.dataframe(
+                    df_date[
+                        [
+                            "name",
+                            "iso_a3",
+                            "currency_code",
+                            "local_price",
+                            "dollar_ex",
+                            "dollar_price",
+                        ]
+                        + base_currencies
+                        + ["adjusted"]
+                    ].sort_values("name"),
+                    use_container_width=True,
+                )
+
+        # Right: time‑travel for this country
         with col_b:
-            st.markdown("**Index breakdown**")
-            st.write(f"Implied PPP FX vs {base_currency}: "
-                     f"{(1 + country_row[base_currency]):.4f} (Big Mac–based)")
-            st.write(f"Raw misvaluation vs {base_currency}: "
-                     f"{country_row[base_currency]:+.2%}")
-            st.write(f"GDP‑adjusted misvaluation: {country_row['adjusted']:+.2%}")
-            st.write(f"Local Big Mac price in USD: ${country_row['dollar_price']:.2f}")
+            st.markdown("**Time travel for this country**")
+
+            # All dates where this country appears
+            country_history = df[df["name"] == country].sort_values("date")
+
+            # Small line chart: raw & adjusted vs time
+            fig_hist = px.line(
+                country_history,
+                x="date",
+                y=[base_currency, "adjusted"],
+                labels={
+                    "value": "Misvaluation",
+                    "date": "Release date",
+                    "variable": "Index type",
+                },
+                color_discrete_map={
+                    base_currency: "#4284ce",
+                    "adjusted": "#ff914d",
+                },
+            )
+            fig_hist.update_layout(
+                legend_title_text="",
+                yaxis_title=f"vs {base_currency}",
+            )
+            st.plotly_chart(fig_hist, use_container_width=True)
+
+            # Optional: show numeric history table
+            if st.checkbox("Show full time series table", key="raw_time_checkbox"):
+                st.dataframe(
+                    country_history[
+                        ["date", base_currency, "adjusted", "dollar_price", "local_price"]
+                    ].sort_values("date"),
+                    use_container_width=True,
+                )
+
 
 
 
