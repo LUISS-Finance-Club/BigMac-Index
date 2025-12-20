@@ -346,7 +346,7 @@ def main():
 
     fig1 = px.bar(df_date, y='name', x=base_currency, color='overvalued',
                   labels={'name': 'Country', base_currency: 'Index Value'},
-                  color_discrete_map={True: "#ff914d", False: "#4284ce"},
+                  color_discrete_map={True: "#4284ce", False: "#ff914d"},
                   orientation='h')
     fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
@@ -362,7 +362,7 @@ def main():
 
     fig2 = px.bar(df_date, y='name', x='adjusted', color='adjusted_overvalued',
                   labels={'name': 'Country', 'adjusted': 'Adjusted Index Value'},
-                  color_discrete_map={True: "#ff914d", False: "#4284ce"},  # True=orange, False=blue
+                  color_discrete_map={True: "#4284ce", False: "#ff914d"},  # True=orange, False=blue
                   orientation='h')
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
