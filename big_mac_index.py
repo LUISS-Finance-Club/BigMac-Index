@@ -199,6 +199,9 @@ def main():
         index=base_currencies.index("USD"),
         )    
     
+    st.sidebar.image(str(HERO_IMG), width="stretch")
+    st.sidebar.caption("Graphics by LUISS Finance Club")
+
     # Economist's official adjusted index for the chosen base
     adjusted_col = f"{base_currency}_adjusted"
     if adjusted_col in df.columns:
