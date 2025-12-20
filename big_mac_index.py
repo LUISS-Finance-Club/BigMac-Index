@@ -10,7 +10,7 @@ from pathlib import Path
 
 APP_DIR = Path(__file__).parent
 DATA_PATH = APP_DIR / "big-mac-source-data-v2.csv"
-HERO_IMG  = APP_DIR / "vis/Big-Mac-2.png"
+HERO_IMG  = APP_DIR / "vis/1.jpg"
 LFC_LOGO = APP_DIR / "vis" / "LFC_Bull_Circle_Blue.png"
 INTRO_IMG  = APP_DIR / "vis/1.jpg"
 
