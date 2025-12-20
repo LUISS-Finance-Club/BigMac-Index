@@ -388,33 +388,6 @@ def main():
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
 
-    # GDP vs dollar price scatter with regression
-    st.subheader("GDP vs Dollar Price with Linear Regression (Log-Log Scale)")
-    st.caption(
-        "Each point is a country. The fitted line shows the typical relationship between income "
-        "(GDP per capita) and Big Mac dollar prices."
-    )
-
-    gdp_df = df[
-        (df["date"] == selected_date)
-        & df["GDP_dollar"].notna()
-        & (df["iso_a3"].isin(regression_countries))
-    ]
-
-    if gdp_df.empty:
-        st.info("No GDP data available for this release to plot the regression.")
-    else:
-        fig3, ax = plt.subplots(figsize=(8, 5))
-        sns.regplot(
-            x=np.log(gdp_df["GDP_dollar"]),
-            y=np.log(gdp_df["dollar_price"]),
-            ax=ax,
-        )
-        ax.set_xlabel("Log(GDP per capita, dollars)")
-        ax.set_ylabel("Log(Big Mac Dollar Price)")
-        st.pyplot(fig3)
-
-
     # raw data option
     if st.checkbox("Show raw data for selected date"):
         st.write(df_date[['name', 'iso_a3', 'currency_code', 'local_price', 'dollar_ex', 'dollar_price'] + base_currencies + ['adjusted']])
