@@ -179,7 +179,15 @@ def main():
     df = calc_dollar_price(df)
     df = calc_raw_index(df, base_currencies)
     #st.write("Rows after raw index:", len(df), "unique countries:", df["iso_a3"].nunique())
-    df = calc_adjusted_index(df, regression_countries)
+    #df = calc_adjusted_index(df, regression_countries)
+
+    # Use Economist's official GDP-adjusted index for the selected base
+    base_currency = st.sidebar.selectbox(...)
+    adjusted_col = f"{base_currency}_adjusted"
+    if adjusted_col in df.columns:
+        df["adjusted"] = df[adjusted_col]
+    else:
+        df["adjusted"] = 0.0
 
     # date
     # mapping of year strings to full dates (taking unique years)
