@@ -396,7 +396,25 @@ def main():
         "and Big Mac dollar prices; deviations from the line drive the GDP-adjusted misvaluation."
     )
 
-    gdp_df = df[(df['date'] == selected_date) & (df['GDP_local'] > 0) & (df['iso_a3'].isin(regression_countries))]
+    gdp_df = df[
+        (df["date"] == selected_date)
+        & (df["GDP_local"] > 0)
+        & (df["iso_a3"].isin(regression_countries))
+    ]
+
+    if gdp_df.empty:
+        st.info("No GDP data available for this release to plot the regression.")
+    else:
+        fig3, ax = plt.subplots(figsize=(8, 5))
+        sns.regplot(
+            x=np.log(gdp_df["GDP_local"]),
+            y=np.log(gdp_df["dollar_price"]),
+            ax=ax,
+        )
+        ax.set_xlabel("Log(GDP per capita)")
+        ax.set_ylabel("Log(Big Mac Dollar Price)")
+        st.pyplot(fig3)
+
 
     fig3, ax = plt.subplots(figsize=(8,5))
     sns.regplot(x=np.log(gdp_df['GDP_local']), y=np.log(gdp_df['dollar_price']), ax=ax)
