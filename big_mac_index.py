@@ -390,15 +390,14 @@ def main():
 
     # GDP vs dollar price scatter with regression
     st.subheader("GDP vs Dollar Price with Linear Regression (Log-Log Scale)")
-
     st.caption(
-        "Each point is a country. The fitted line shows the typical relationship between income (GDP per capita) "
-        "and Big Mac dollar prices; deviations from the line drive the GDP-adjusted misvaluation."
+        "Each point is a country. The fitted line shows the typical relationship between income "
+        "(GDP per capita) and Big Mac dollar prices."
     )
 
     gdp_df = df[
         (df["date"] == selected_date)
-        & (df["GDP_local"] > 0)
+        & df["GDP_dollar"].notna()
         & (df["iso_a3"].isin(regression_countries))
     ]
 
@@ -407,20 +406,14 @@ def main():
     else:
         fig3, ax = plt.subplots(figsize=(8, 5))
         sns.regplot(
-            x=np.log(gdp_df["GDP_local"]),
+            x=np.log(gdp_df["GDP_dollar"]),
             y=np.log(gdp_df["dollar_price"]),
             ax=ax,
         )
-        ax.set_xlabel("Log(GDP per capita)")
+        ax.set_xlabel("Log(GDP per capita, dollars)")
         ax.set_ylabel("Log(Big Mac Dollar Price)")
         st.pyplot(fig3)
 
-
-    fig3, ax = plt.subplots(figsize=(8,5))
-    sns.regplot(x=np.log(gdp_df['GDP_local']), y=np.log(gdp_df['dollar_price']), ax=ax)
-    ax.set_xlabel("Log(GDP per capita)")
-    ax.set_ylabel("Log(Big Mac Dollar Price)")
-    st.pyplot(fig3)
 
     # raw data option
     if st.checkbox("Show raw data for selected date"):
