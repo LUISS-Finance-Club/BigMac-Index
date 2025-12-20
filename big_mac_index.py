@@ -181,6 +181,8 @@ def main():
     #st.write("Rows after raw index:", len(df), "unique countries:", df["iso_a3"].nunique())
     #df = calc_adjusted_index(df, regression_countries)
 
+    st.sidebar.image(str(HERO_IMG), width="stretch")
+
     # --- Release selector (Month Year, no day) ---
     all_dates = sorted(df["date"].dropna().unique())
     all_dates = [pd.Timestamp(d).to_pydatetime() for d in all_dates]
@@ -199,8 +201,6 @@ def main():
         index=base_currencies.index("USD"),
         )    
     
-    st.sidebar.image(str(HERO_IMG), width="stretch")
-    st.sidebar.caption("Graphics by LUISS Finance Club")
 
     # Economist's official adjusted index for the chosen base
     adjusted_col = f"{base_currency}_adjusted"
