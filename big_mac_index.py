@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 import plotly.express as px
 import statsmodels.api as sm
-
 from pathlib import Path
 
 APP_DIR = Path(__file__).parent
@@ -369,7 +368,7 @@ def main():
         top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
         with colA:
             st.caption(f"Raw vs {base_currency}")
-            RAW_ORANGE = "#ff914d"
+            RAW_ORANGE = "#792727"
             RAW_BLUE   = "#4284ce"
 
             for _, r in top_raw.iterrows():
@@ -416,7 +415,7 @@ def main():
 
     with colB:
         st.caption("GDP-adjusted")
-        RAW_ORANGE = "#ff914d"
+        RAW_ORANGE = "#792727"
         RAW_BLUE = "#4284ce"
 
         for _, r in top_adj.iterrows():
@@ -466,7 +465,7 @@ def main():
 
     fig1 = px.bar(df_date, y='name', x=base_currency, color='overvalued',
                   labels={'name': 'Country', base_currency: 'Index Value'},
-                  color_discrete_map={True: "#4284ce", False: "#ff914d"},
+                  color_discrete_map={True: "#4284ce", False: "#792727"},
                   orientation='h')
     fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
@@ -482,7 +481,7 @@ def main():
 
     fig2 = px.bar(df_date, y='name', x='adjusted', color='adjusted_overvalued',
                   labels={'name': 'Country', 'adjusted': 'Adjusted Index Value'},
-                  color_discrete_map={True: "#4284ce", False: "#ff914d"},  # True=orange, False=blue
+                  color_discrete_map={True: "#4284ce", False: "#792727"},  # True=orange, False=blue
                   orientation='h')
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
@@ -517,7 +516,7 @@ def main():
         ["iso_a3", "name", base_currency, "adjusted"]
     ]
 
-    blue_orange = ["#ff914d", "#ffad76", "#7db8fb", "#4284ce"]
+    blue_orange = ["#792727", "#bb1919", "#7db8fb", "#4284ce"]
 
     fig_map = px.choropleth(
         map_df,
@@ -698,7 +697,7 @@ def main():
                 },
                 color_discrete_map={
                     base_currency: "#4284ce",
-                    "adjusted": "#ff914d",
+                    "adjusted": "#792727",
                 },
             )
             fig_hist.update_layout(
