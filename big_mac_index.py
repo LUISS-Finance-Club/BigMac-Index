@@ -523,7 +523,7 @@ def main():
         ["iso_a3", "name", base_currency, "adjusted"]
     ]
 
-    blue_orange = ["#792727", "#bb1919", "#97c5f9", "#4284ce"]
+    blue_orange = ["#bb1919", "#fb7a7a", "#97c5f9", "#4284ce"]
 
     fig_map = px.choropleth(
         map_df,
