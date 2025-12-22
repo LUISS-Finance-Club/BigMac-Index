@@ -13,6 +13,13 @@ HERO_IMG  = APP_DIR / "vis/Big-Mac-2.png"
 LFC_LOGO = APP_DIR / "vis" / "LFC_Bull_Circle_Blue.png"
 INTRO_IMG  = APP_DIR / "vis/8.jpg"
 
+# COLOR CODES!!!
+# LFC Blue (Bull) #4284ce
+# LFC Blue (LFC Logo) #4c87ca
+# BigMac Bright Red #bb1919
+# BigMac Dark Red #792727
+# BigMac Orange #ff914d
+
 @st.cache_data
 def load_data():
     df = pd.read_csv(DATA_PATH, na_values=['#N/A'])
