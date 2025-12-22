@@ -171,9 +171,8 @@ def main():
     "It is based on the theory of purchasing-power parity (PPP), the notion that in the long run exchange rates should move towards the rate that would equalize the prices of an identical basket of goods and services (in this case, a Big Mac) in any two countries. ")
     st.write("")
 
-    st.write("")  # spacing [web:625]
+    #st.write("")  # spacing [web:625]
     #st.image(str(INTRO_IMG), width="stretch")
-    st.write("")  # spacing [web:625]
 
 
     # --- Intro paragraph ---
@@ -187,7 +186,6 @@ def main():
 
     # --- Big Mac hero image ---
     st.image(str(HERO_IMG), width="stretch")
-    st.caption("Graphics by LUISS Finance Club")
 
     st.write("")  # spacing [web:625]
 
@@ -362,7 +360,7 @@ def main():
         movers["adj_change"] = movers["adjusted"] - movers["adjusted_prev"]
 
         prev_label = pd.Timestamp(prev_date).strftime("%b %Y")  # e.g., "Jul 2024"
-        st.subheader(f"Biggest movers since {prev_label}")
+        st.subheader(f"Biggest Movers Since {prev_label}")
         st.caption(
         "Shows the countries whose misvaluation changed the most since the previous release. "
         "‘Raw’ compares Big Mac dollar prices vs the selected base currency; ‘GDP-adjusted’ controls for income effects."
