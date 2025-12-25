@@ -373,7 +373,7 @@ def main():
         top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
         with colA:
             st.caption(f"Raw vs {base_currency}")
-            RAW_ORANGE = "#bb1919"
+            RAW_RED   = "#ff4d4d"
             RAW_GREEN = "#16c784"  
 
             for _, r in top_raw.iterrows():
