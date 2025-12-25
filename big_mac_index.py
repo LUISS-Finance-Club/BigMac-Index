@@ -420,13 +420,13 @@ def main():
 
     with colB:
         st.caption("GDP-adjusted")
-        RAW_ORANGE = "#bb1919"
-        RAW_BLUE = "#4284ce"
+        RAW_RED   = "#ff4d4d"
+        RAW_GREEN = "#16c784"  
 
         for _, r in top_adj.iterrows():
             value = r["adjusted"]
             delta = r["adj_change"]
-            color = RAW_ORANGE if delta < 0 else RAW_BLUE
+            color = RAW_RED if delta < 0 else RAW_GREEN
             sign = "+" if delta >= 0 else ""
 
             st.markdown(
