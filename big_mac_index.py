@@ -111,6 +111,61 @@ def main():
     st.markdown(
         """
         <style>
+        /* Bigger 'Stats For Nerds' expander label */
+        div[data-testid="stExpander"] > summary {
+            font-size: 17px !important;
+            font-weight: 600 !important;
+        }
+
+        /* Nerd block styling */
+        .nerd-block {
+            font-family: "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+                        "Courier New", monospace;
+            background: radial-gradient(circle at top left,
+                        #111827 0, #020617 45%, #000000 100%);
+            border-radius: 12px;
+            padding: 18px 20px 14px 20px;
+            border: 1px solid rgba(148, 163, 184, 0.35);
+            box-shadow: 0 0 18px rgba(15,23,42,0.8);
+        }
+        .nerd-title {
+            font-size: 14px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #a5b4fc;
+            margin-bottom: 6px;
+        }
+        .nerd-label {
+            font-size: 12px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+        .nerd-value-good,
+        .nerd-value-bad,
+        .nerd-value-neutral {
+            font-size: 14px;
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+        .nerd-value-good    { color: #16c784; }
+        .nerd-value-bad     { color: #ff4d4d; }
+        .nerd-value-neutral { color: #e5e7eb; }
+
+        .nerd-separator {
+            border-top: 1px dashed rgba(148, 163, 184, 0.35);
+            margin: 12px 0 14px 0;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+    st.markdown(
+        """
+        <style>
         /* Make st.metric labels and values show fully, no ... */
         [data-testid="stMetricValue"] {
             white-space: normal !important;
@@ -660,55 +715,10 @@ def main():
 
     # --- Stats for nerds ---
     with st.expander("Stats For Nerds"):
-        st.markdown(
-            """
-            <style>
-            .nerd-block {
-                font-family: "Roboto Mono", "SF Mono", Menlo, Monaco, Consolas,
-                            "Liberation Mono", "Courier New", monospace;
-                background: radial-gradient(circle at top left,
-                            #111827 0, #020617 45%, #000000 100%);
-                border-radius: 12px;
-                padding: 18px 20px 14px 20px;
-                border: 1px solid rgba(148, 163, 184, 0.35);
-                box-shadow: 0 0 18px rgba(15,23,42,0.8);
-            }
-            .nerd-title {
-                font-size: 14px;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                color: #a5b4fc;
-                margin-bottom: 6px;
-            }
-            .nerd-label {
-                font-size: 12px;
-                color: #9ca3af;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-            }
-            .nerd-value-good,
-            .nerd-value-bad,
-            .nerd-value-neutral {
-                font-size: 14px;
-                white-space: normal !important;
-                overflow: visible !important;
-                text-overflow: clip !important;
-            }
-            .nerd-value-good  { color: #16c784; }
-            .nerd-value-bad   { color: #ff4d4d; }
-            .nerd-value-neutral { color: #e5e7eb; }
-
-            .nerd-separator {
-                border-top: 1px dashed rgba(148, 163, 184, 0.35);
-                margin: 12px 0 14px 0;
-            }
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
+        # Outer hacker-style container
+        st.markdown('<div class="nerd-block">', unsafe_allow_html=True)
 
         # ---------- Cross-section stats for this release ----------
-        st.markdown('<div class="nerd-block">', unsafe_allow_html=True)
         st.markdown('<div class="nerd-title">CROSS‑SECTION SNAPSHOT</div>', unsafe_allow_html=True)
 
         misvals = df_date[["name", "iso_a3", base_currency, "adjusted"]].copy()
@@ -832,7 +842,7 @@ def main():
                 unsafe_allow_html=True,
             )
 
-            st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
+        with col_b:
             st.markdown('<div class="nerd-label">RAW DATA DUMP</div>', unsafe_allow_html=True)
             if st.checkbox("Show raw data for selected date", key="raw_date_checkbox"):
                 st.dataframe(
@@ -851,41 +861,42 @@ def main():
                     use_container_width=True,
                 )
 
-        # ---------- Time travel for this country ----------
-        with col_b:
-            st.markdown('<div class="nerd-label">TIME TRAVEL</div>', unsafe_allow_html=True)
+        # ---------- Time travel (full width) ----------
+        st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
+        st.markdown('<div class="nerd-label">TIME TRAVEL</div>', unsafe_allow_html=True)
 
-            country_history = df[df["name"] == country].sort_values("date")
+        country_history = df[df["name"] == country].sort_values("date")
 
-            fig_hist = px.line(
-                country_history,
-                x="date",
-                y=[base_currency, "adjusted"],
-                labels={
-                    "value": "Misvaluation",
-                    "date": "Release date",
-                    "variable": "Index type",
-                },
-                color_discrete_map={
-                    base_currency: "#16c784",  # raw
-                    "adjusted": "#ff4d4d",     # adjusted
-                },
+        fig_hist = px.line(
+            country_history,
+            x="date",
+            y=[base_currency, "adjusted"],
+            labels={
+                "value": "Misvaluation",
+                "date": "Release date",
+                "variable": "Index type",
+            },
+            color_discrete_map={
+                base_currency: "#16c784",   # raw
+                "adjusted": "#ff4d4d",      # adjusted
+            },
+        )
+        fig_hist.update_layout(
+            legend_title_text="",
+            yaxis_title=f"vs {base_currency}",
+        )
+        st.plotly_chart(fig_hist, use_container_width=True)
+
+        if st.checkbox("Show full time series table", key="raw_time_checkbox"):
+            st.dataframe(
+                country_history[
+                    ["date", base_currency, "adjusted", "dollar_price", "local_price"]
+                ].sort_values("date"),
+                use_container_width=True,
             )
-            fig_hist.update_layout(
-                legend_title_text="",
-                yaxis_title=f"vs {base_currency}",
-            )
-            st.plotly_chart(fig_hist, use_container_width=True)
-
-            if st.checkbox("Show full time series table", key="raw_time_checkbox"):
-                st.dataframe(
-                    country_history[
-                        ["date", base_currency, "adjusted", "dollar_price", "local_price"]
-                    ].sort_values("date"),
-                    use_container_width=True,
-                )
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 
