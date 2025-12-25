@@ -217,7 +217,7 @@ def main():
     #df = calc_adjusted_index(df, regression_countries)
 
     st.sidebar.image(str(INTRO_IMG), width="stretch")
-    st.sidebar.caption
+    st.sidebar.caption("Image by LFC") 
 
     # --- Release selector (Month Year, no day) ---
     all_dates = sorted(df["date"].dropna().unique())
