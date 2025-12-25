@@ -374,13 +374,13 @@ def main():
         with colA:
             st.caption(f"Raw vs {base_currency}")
             RAW_ORANGE = "#bb1919"
-            RAW_BLUE   = "#4284ce"
+            RAW_GREEN = "#16c784"  
 
             for _, r in top_raw.iterrows():
                 value = r[base_currency]
                 delta = r["raw_change"]
 
-                color = RAW_ORANGE if delta < 0 else RAW_BLUE
+               color = RAW_RED if delta < 0 else RAW_GREEN
                 sign  = "+" if delta >= 0 else ""
 
                 st.markdown(
