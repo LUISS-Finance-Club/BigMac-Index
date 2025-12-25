@@ -217,6 +217,7 @@ def main():
     #df = calc_adjusted_index(df, regression_countries)
 
     st.sidebar.image(str(INTRO_IMG), width="stretch")
+    st.sidebar.caption
 
     # --- Release selector (Month Year, no day) ---
     all_dates = sorted(df["date"].dropna().unique())
@@ -391,15 +392,13 @@ def main():
 
             for _, r in top_raw.iterrows():
                 value = r[base_currency]
-                curr  = r[base_currency]
-                prev  = r[f"{base_currency}_prev"]
-                delta = r["raw_change"]          # curr - prev
+                delta = r["raw_change"]          # current raw misvaluation - previous
 
-                # Did misvaluation move closer to 0 (good) or further away (bad)?
-                improvement = abs(curr) < abs(prev)
-
-                color = GOOD_GREEN if improvement else BAD_RED
+                # If misvaluation increased -> burgers relatively more expensive -> red.
+                # If misvaluation decreased -> burgers relatively cheaper -> green.
+                color = BAD_RED if delta > 0 else GOOD_GREEN
                 sign  = "+" if delta >= 0 else ""
+                label = f"{sign}{delta:.2%}"
 
                 st.markdown(
                     f"""
@@ -422,63 +421,59 @@ def main():
                         color:{color};
                         background-color:rgba(255,255,255,0.06);
                     ">
-                        {sign}{delta:.2%}
+                        {label}
                     </div>
                     </div>
                     """,
                     unsafe_allow_html=True,
                 )
 
-
-
         # Top adjusted movers
         top_adj = movers.reindex(
-        movers["adj_change"].abs().sort_values(ascending=False).index
-    ).head(5)
+            movers["adj_change"].abs().sort_values(ascending=False).index
+        ).head(5)
 
-    with colB:
-        st.caption("GDP-adjusted")
-        BAD_RED    = "#ff4d4d"
-        GOOD_GREEN = "#16c784"
+        with colB:
+            st.caption("GDP-adjusted")
+            BAD_RED    = "#ff4d4d"
+            GOOD_GREEN = "#16c784"
 
-        for _, r in top_adj.iterrows():
-            value = r["adjusted"]
-            curr  = r["adjusted"]
-            prev  = r["adjusted_prev"]
-            delta = r["adj_change"]
+            for _, r in top_adj.iterrows():
+                value = r["adjusted"]
+                delta = r["adj_change"]          # current adjusted misvaluation - previous
 
-            improvement = abs(curr) < abs(prev)
+                color = BAD_RED if delta > 0 else GOOD_GREEN
+                sign  = "+" if delta >= 0 else ""
+                label = f"{sign}{delta:.2%}"
 
-            color = GOOD_GREEN if improvement else BAD_RED
-            sign  = "+" if delta >= 0 else ""
+                st.markdown(
+                    f"""
+                    <div style="
+                        border-radius: 10px;
+                        padding: 14px 18px;
+                        margin-bottom: 8px;
+                        background-color: #111827;
+                    ">
+                    <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
+                    <div style="font-size:28px; font-weight:600; margin-top:4px;">
+                        {value:+.2%}
+                    </div>
+                    <div style="
+                        display:inline-block;
+                        margin-top:8px;
+                        padding:2px 10px;
+                        border-radius:999px;
+                        font-size:13px;
+                        color:{color};
+                        background-color:rgba(255,255,255,0.06);
+                    ">
+                        {label}
+                    </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True,
+                )
 
-            st.markdown(
-                f"""
-                <div style="
-                    border-radius: 10px;
-                    padding: 14px 18px;
-                    margin-bottom: 8px;
-                    background-color: #111827;
-                ">
-                <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
-                <div style="font-size:28px; font-weight:600; margin-top:4px;">
-                    {value:+.2%}
-                </div>
-                <div style="
-                    display:inline-block;
-                    margin-top:8px;
-                    padding:2px 10px;
-                    border-radius:999px;
-                    font-size:13px;
-                    color:{color};
-                    background-color:rgba(255,255,255,0.06);
-                ">
-                    {sign}{delta:.2%}
-                </div>
-                </div>
-                """,
-                unsafe_allow_html=True,
-            )
 
 
     # plot raw index
@@ -488,15 +483,21 @@ def main():
         "negative bars mean undervalued. Values are computed from Big Mac prices converted to dollars."
     )
 
-    df_date['overvalued'] = df_date[base_currency] > 0
+    df_date["overvalued"] = df_date[base_currency] > 0  # >0 = more expensive
 
-    fig1 = px.bar(df_date, y='name', x=base_currency, color='overvalued',
-                  labels={'name': 'Country', base_currency: 'Index Value'},
-                  color_discrete_map={
-                    True:  "#ff4d4d",  # overvalued -> red
-                    False: "#16c784",  # undervalued -> green
-                 },
-                  orientation='h')
+    fig1 = px.bar(
+        df_date,
+        y="name",
+        x=base_currency,
+        color="overvalued",
+        labels={"name": "Country", base_currency: "Index Value"},
+        color_discrete_map={
+            True:  "#ff4d4d",   # overvalued -> red (bad)
+            False: "#16c784",   # undervalued -> green (good)
+        },
+        orientation="h",
+    )
+
     fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
 
@@ -507,15 +508,21 @@ def main():
         "It estimates a ‘fair value’ using the relationship between price levels and GDP per capita."
     )
 
-    df_date['adjusted_overvalued'] = df_date['adjusted'] > 0
+    df_date["adjusted_overvalued"] = df_date["adjusted"] > 0
 
-    fig2 = px.bar(df_date, y='name', x='adjusted', color='adjusted_overvalued',
-                  labels={'name': 'Country', 'adjusted': 'Adjusted Index Value'},
-                  color_discrete_map={
-                    True:  "#ff4d4d",  # overvalued -> red
-                    False: "#16c784",  # undervalued -> green
-                  },
-                  orientation='h')
+    fig2 = px.bar(
+        df_date,
+        y="name",
+        x="adjusted",
+        color="adjusted_overvalued",
+        labels={"name": "Country", "adjusted": "Adjusted Index Value"},
+        color_discrete_map={
+            True:  "#ff4d4d",   # more expensive after adjustment -> red
+            False: "#16c784",   # cheaper after adjustment -> green
+        },
+        orientation="h",
+    )
+
     fig2.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Adjusted Index', showlegend=False)
     st.plotly_chart(fig2, use_container_width=True)
 
