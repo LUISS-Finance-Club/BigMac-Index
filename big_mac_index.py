@@ -166,8 +166,8 @@ def main():
 
     st.write("")
     st.markdown("" \
-    "This is an interavtive dashboard from the LUISS Finance Club to explore The Economist's Big Mac Index." \
-    "The Big Mac Index is a lighthearted guide to whether currencies are at their 'correct' level. " \
+    "This is an interavtive dashboard from the LUISS Finance Club to explore The Economist's Big Mac Index. " \
+    "The Big Mac Index is a lighthearted guide to whether currencies are at their 'correct' level.  " \
     "It is based on the theory of purchasing-power parity (PPP), the notion that in the long run exchange rates should move towards the rate that would equalize the prices of an identical basket of goods and services (in this case, a Big Mac) in any two countries. ")
     st.write("")
 
