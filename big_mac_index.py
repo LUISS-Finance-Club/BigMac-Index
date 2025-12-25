@@ -384,62 +384,21 @@ def main():
         # Top raw movers
         top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
         with colA:
-            st.caption(f"Raw vs {base_currency}")
-            RAW_RED   = "#ff4d4d"
-            RAW_GREEN = "#16c784"  
+        st.caption(f"Raw vs {base_currency}")
+        BAD_RED    = "#ff4d4d"
+        GOOD_GREEN = "#16c784"
 
-            for _, r in top_raw.iterrows():
-                value = r[base_currency]
-                delta = r["raw_change"]
+        for _, r in top_raw.iterrows():
+            value = r[base_currency]
+            curr  = r[base_currency]
+            prev  = r[f"{base_currency}_prev"]
+            delta = r["raw_change"]          # curr - prev
 
-                color = RAW_RED if delta < 0 else RAW_GREEN
-                sign  = "+" if delta >= 0 else ""
+            # Did misvaluation move closer to 0 (good) or further away (bad)?
+            improvement = abs(curr) < abs(prev)
 
-                st.markdown(
-                    f"""
-                    <div style="
-                        border-radius: 10px;
-                        padding: 14px 18px;
-                        margin-bottom: 8px;
-                        background-color: #111827;
-                    ">
-                    <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
-                    <div style="font-size:28px; font-weight:600; margin-top:4px;">
-                        {value:+.2%}
-                    </div>
-                    <div style="
-                        display:inline-block;
-                        margin-top:8px;
-                        padding:2px 10px;
-                        border-radius:999px;
-                        font-size:13px;
-                        color:{color};
-                        background-color:rgba(255,255,255,0.06);
-                    ">
-                        {sign}{delta:.2%}
-                    </div>
-
-                    </div>
-                    """,
-                    unsafe_allow_html=True,
-                )
-
-
-        # Top adjusted movers
-        top_adj = movers.reindex(
-        movers["adj_change"].abs().sort_values(ascending=False).index
-    ).head(5)
-
-    with colB:
-        st.caption("GDP-adjusted")
-        RAW_RED   = "#ff4d4d"
-        RAW_GREEN = "#16c784"  
-
-        for _, r in top_adj.iterrows():
-            value = r["adjusted"]
-            delta = r["adj_change"]
-            color = RAW_RED if delta < 0 else RAW_GREEN
-            sign = "+" if delta >= 0 else ""
+            color = GOOD_GREEN if improvement else BAD_RED
+            sign  = "+" if delta >= 0 else ""
 
             st.markdown(
                 f"""
@@ -464,7 +423,57 @@ def main():
                 ">
                     {sign}{delta:.2%}
                 </div>
+                </div>
+                """,
+                unsafe_allow_html=True,
+            )
 
+
+
+        # Top adjusted movers
+        top_adj = movers.reindex(
+        movers["adj_change"].abs().sort_values(ascending=False).index
+    ).head(5)
+
+    with colB:
+        st.caption("GDP-adjusted")
+        BAD_RED    = "#ff4d4d"
+        GOOD_GREEN = "#16c784"
+
+        for _, r in top_adj.iterrows():
+            value = r["adjusted"]
+            curr  = r["adjusted"]
+            prev  = r["adjusted_prev"]
+            delta = r["adj_change"]
+
+            improvement = abs(curr) < abs(prev)
+
+            color = GOOD_GREEN if improvement else BAD_RED
+            sign  = "+" if delta >= 0 else ""
+
+            st.markdown(
+                f"""
+                <div style="
+                    border-radius: 10px;
+                    padding: 14px 18px;
+                    margin-bottom: 8px;
+                    background-color: #111827;
+                ">
+                <div style="font-size:14px; opacity:0.8;">{r['name']}</div>
+                <div style="font-size:28px; font-weight:600; margin-top:4px;">
+                    {value:+.2%}
+                </div>
+                <div style="
+                    display:inline-block;
+                    margin-top:8px;
+                    padding:2px 10px;
+                    border-radius:999px;
+                    font-size:13px;
+                    color:{color};
+                    background-color:rgba(255,255,255,0.06);
+                ">
+                    {sign}{delta:.2%}
+                </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
