@@ -380,7 +380,7 @@ def main():
                 value = r[base_currency]
                 delta = r["raw_change"]
 
-               color = RAW_RED if delta < 0 else RAW_GREEN
+                color = RAW_RED if delta < 0 else RAW_GREEN
                 sign  = "+" if delta >= 0 else ""
 
                 st.markdown(
