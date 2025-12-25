@@ -107,6 +107,28 @@ import streamlit as st
 
 def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
+    st.markdown(
+        """
+        <style>
+        /* Prevent metric values from being truncated with ... */
+        [data-testid="stMetricValue"] {
+            font-size: 32px;            /* slightly smaller if needed */
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+
+        /* Also keep metric labels from truncating */
+        [data-testid="stMetricLabel"] {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
     st.markdown(
         """
@@ -387,7 +409,7 @@ def main():
         top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
         with colA:
             st.caption(f"Raw vs {base_currency}")
-            BAD_RED    = "#bb1919"
+            BAD_RED    = "#ff4d4d"
             GOOD_GREEN = "#16c784"
 
             for _, r in top_raw.iterrows():
@@ -435,7 +457,7 @@ def main():
 
         with colB:
             st.caption("GDP-adjusted")
-            BAD_RED    = "#bb1919"
+            BAD_RED    = "#ff4d4d"
             GOOD_GREEN = "#16c784"
 
             for _, r in top_adj.iterrows():
@@ -492,7 +514,7 @@ def main():
         color="overvalued",
         labels={"name": "Country", base_currency: "Index Value"},
         color_discrete_map={
-            True:  "#bb1919",   # overvalued -> red (bad)
+            True:  "#ff4d4d",   # overvalued -> red (bad)
             False: "#16c784",   # undervalued -> green (good)
         },
         orientation="h",
@@ -517,7 +539,7 @@ def main():
         color="adjusted_overvalued",
         labels={"name": "Country", "adjusted": "Adjusted Index Value"},
         color_discrete_map={
-            True:  "#bb1919",   # more expensive after adjustment -> red
+            True:  "#ff4d4d",   # more expensive after adjustment -> red
             False: "#16c784",   # cheaper after adjustment -> green
         },
         orientation="h",
@@ -556,7 +578,7 @@ def main():
         ["iso_a3", "name", base_currency, "adjusted"]
     ]
 
-    green_red = ["#16c784", "#a5e4c0", "#ffd0b3", "#bb1919"]
+    green_red = ["#16c784", "#a5e4c0", "#ffd0b3", "#ff4d4d"]
 
     fig_map = px.choropleth(
         map_df,
