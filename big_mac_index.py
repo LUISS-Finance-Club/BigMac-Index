@@ -107,6 +107,28 @@ import streamlit as st
 
 def main():
     st.set_page_config(page_title="Big Mac Index Dashboard", layout="wide")
+
+    st.markdown(
+        """
+        <style>
+        /* Make st.metric labels and values show fully, no ... */
+        [data-testid="stMetricValue"] {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+            font-size: 30px;              /* tweak if it feels too big */
+        }
+
+        [data-testid="stMetricLabel"] {
+            white-space: normal !important;
+            overflow: visible !important;
+            text-overflow: clip !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
     st.markdown(
         """
         <style>
@@ -406,7 +428,7 @@ def main():
         colA, colB = st.columns(2)
 
         # Top raw movers
-        top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
+        top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(3)
         with colA:
             st.caption(f"Raw vs {base_currency}")
             BAD_RED    = "#ff4d4d"
