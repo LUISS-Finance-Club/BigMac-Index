@@ -475,7 +475,7 @@ def main():
         # Top adjusted movers
         top_adj = movers.reindex(
             movers["adj_change"].abs().sort_values(ascending=False).index
-        ).head(5)
+        ).head(3)
 
         with colB:
             st.caption("GDP-adjusted")
