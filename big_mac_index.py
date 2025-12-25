@@ -387,7 +387,7 @@ def main():
         top_raw = movers.reindex(movers["raw_change"].abs().sort_values(ascending=False).index).head(5)
         with colA:
             st.caption(f"Raw vs {base_currency}")
-            BAD_RED    = "#ff4d4d"
+            BAD_RED    = "#bb1919"
             GOOD_GREEN = "#16c784"
 
             for _, r in top_raw.iterrows():
@@ -435,7 +435,7 @@ def main():
 
         with colB:
             st.caption("GDP-adjusted")
-            BAD_RED    = "#ff4d4d"
+            BAD_RED    = "#bb1919"
             GOOD_GREEN = "#16c784"
 
             for _, r in top_adj.iterrows():
@@ -492,7 +492,7 @@ def main():
         color="overvalued",
         labels={"name": "Country", base_currency: "Index Value"},
         color_discrete_map={
-            True:  "#ff4d4d",   # overvalued -> red (bad)
+            True:  "#bb1919",   # overvalued -> red (bad)
             False: "#16c784",   # undervalued -> green (good)
         },
         orientation="h",
@@ -517,7 +517,7 @@ def main():
         color="adjusted_overvalued",
         labels={"name": "Country", "adjusted": "Adjusted Index Value"},
         color_discrete_map={
-            True:  "#ff4d4d",   # more expensive after adjustment -> red
+            True:  "#bb1919",   # more expensive after adjustment -> red
             False: "#16c784",   # cheaper after adjustment -> green
         },
         orientation="h",
@@ -556,7 +556,7 @@ def main():
         ["iso_a3", "name", base_currency, "adjusted"]
     ]
 
-    green_red = ["#16c784", "#a5e4c0", "#ffd0b3", "#ff4d4d"]
+    green_red = ["#16c784", "#a5e4c0", "#ffd0b3", "#bb1919"]
 
     fig_map = px.choropleth(
         map_df,
@@ -615,27 +615,65 @@ def main():
     st.write("")  # small spacer
 
     # --- Stats for nerds ---
-    st.write("")  # small spacer
-
     with st.expander("Stats for nerds"):
-        # ---------- Cross-section stats for this release ----------
-        st.markdown("### Cross‑section snapshot")
+        st.markdown(
+            """
+            <style>
+            .nerd-block {
+                font-family: "Roboto Mono", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+                background: radial-gradient(circle at top left, #111827 0, #020617 45%, #000000 100%);
+                border-radius: 12px;
+                padding: 18px 20px 14px 20px;
+                border: 1px solid rgba(148, 163, 184, 0.35);
+                box-shadow: 0 0 18px rgba(15,23,42,0.8);
+            }
+            .nerd-title {
+                font-size: 14px;
+                letter-spacing: 0.08em;
+                text-transform: uppercase;
+                color: #a5b4fc;
+                margin-bottom: 6px;
+            }
+            .nerd-label {
+                font-size: 12px;
+                color: #9ca3af;
+            }
+            .nerd-value-good {
+                font-size: 14px;
+                color: #16c784;
+            }
+            .nerd-value-bad {
+                font-size: 14px;
+                color: #ff4d4d;
+            }
+            .nerd-value-neutral {
+                font-size: 14px;
+                color: #e5e7eb;
+            }
+            .nerd-separator {
+                border-top: 1px dashed rgba(148, 163, 184, 0.35);
+                margin: 12px 0 14px 0;
+            }
+            </style>
+            """,
+            unsafe_allow_html=True,
+        )
 
-        # Misvaluation distribution for this release
-        misvals = df_date[[ "name", "iso_a3", base_currency, "adjusted" ]].copy()
+        # ---------- Cross-section stats for this release ----------
+        st.markdown('<div class="nerd-block">', unsafe_allow_html=True)
+        st.markdown('<div class="nerd-title">CROSS‑SECTION SNAPSHOT</div>', unsafe_allow_html=True)
+
+        misvals = df_date[["name", "iso_a3", base_currency, "adjusted"]].copy()
         misvals["abs_raw"] = misvals[base_currency].abs()
 
-        # Rank of the selected country by raw undervaluation/overvaluation
         misvals["rank_raw"] = misvals[base_currency].rank(method="min", ascending=True)
         misvals["rank_abs"] = misvals["abs_raw"].rank(method="min", ascending=False)
-
         this = misvals[misvals["name"] == country].iloc[0]
 
         median_raw = misvals[base_currency].median()
         p10 = misvals[base_currency].quantile(0.10)
         p90 = misvals[base_currency].quantile(0.90)
 
-        # z‑score of current misvaluation vs cross‑section
         mean_raw = misvals[base_currency].mean()
         std_raw = misvals[base_currency].std(ddof=0)
         if std_raw > 0:
@@ -650,59 +688,104 @@ def main():
         col_cs1, col_cs2 = st.columns(2)
 
         with col_cs1:
-            st.markdown("**Where this country sits today**")
-            st.write(f"Countries this release: {total_c}")
-            st.write(
-                f"Raw misvaluation vs {base_currency}: "
-                f"{this[base_currency]:+.2%} "
-                f"(rank {int(this['rank_abs'])} by magnitude)"
+            st.markdown('<span class="nerd-label">where this country sits</span>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="nerd-value-neutral">Universe: {total_c} countries this release</div>',
+                unsafe_allow_html=True,
             )
-            st.write(
-                f"Cross‑section median misvaluation: {median_raw:+.2%} "
-                f"(10th pct: {p10:+.2%}, 90th pct: {p90:+.2%})"
+            st.markdown(
+                f'<div class="nerd-value-bad">Raw misvaluation vs {base_currency}: '
+                f'{this[base_currency]:+.2%}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Rank by |misvaluation|: #{int(this["rank_abs"])} '
+                f'({this["iso_a3"]})</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Median: {median_raw:+.2%} '
+                f'(P10: {p10:+.2%} · P90: {p90:+.2%})</div>',
+                unsafe_allow_html=True,
             )
             if not np.isnan(z_score):
-                st.write(f"Z‑score of misvaluation: {z_score:+.2f}σ")
+                z_color = "nerd-value-bad" if abs(z_score) >= 2 else "nerd-value-neutral"
+                st.markdown(
+                    f'<div class="{z_color}">Z‑score: {z_score:+.2f}σ</div>',
+                    unsafe_allow_html=True,
+                )
 
         with col_cs2:
-            st.markdown("**Market wide picture**")
-            st.write(f"Overvalued vs {base_currency}: {num_over} of {total_c}")
-            st.write(f"Undervalued vs {base_currency}: {num_under} of {total_c}")
-            st.write(
-                "Rule‑of‑thumb: |misvaluation| ≳ 2σ is a ‘big’ deviation "
-                "from burger‑based parity."
+            st.markdown('<span class="nerd-label">market‑wide picture</span>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="nerd-value-bad">Overvalued vs {base_currency}: '
+                f'{num_over} / {total_c}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-good">Undervalued vs {base_currency}: '
+                f'{num_under} / {total_c}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                '<div class="nerd-value-neutral">Rule‑of‑thumb: |misvaluation| ≳ 2σ '
+                'is a “large” deviation.</div>',
+                unsafe_allow_html=True,
             )
 
-        st.markdown("---")
+        st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
 
         # ---------- Snapshot & raw vs adjusted gap ----------
         col_a, col_b = st.columns(2)
 
         with col_a:
-            st.markdown("**Selected snapshot**")
-            st.write(f"Release date: {selected_date.date()}")
-            st.write(f"Base currency: {base_currency}")
-            st.write(f"Country: {country_row['name']} ({country_row['iso_a3']})")
-            st.write(
-                f"Local Big Mac price: {country_row['local_price']:.2f} "
-                f"{country_row['currency_code']}"
+            st.markdown('<div class="nerd-label">current snapshot</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="nerd-value-neutral">Release date: {selected_date.date()}</div>',
+                unsafe_allow_html=True,
             )
-            st.write(f"Dollar price: ${country_row['dollar_price']:.2f}")
+            st.markdown(
+                f'<div class="nerd-value-neutral">Base currency: {base_currency}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Country: {country_row["name"]} '
+                f'({country_row["iso_a3"]})</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Local Big Mac price: '
+                f'{country_row["local_price"]:.2f} {country_row["currency_code"]}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Dollar price: '
+                f'${country_row["dollar_price"]:.2f}</div>',
+                unsafe_allow_html=True,
+            )
 
-            # Implied PPP rate vs base currency (relative to USD)
-            st.markdown("**Raw vs GDP‑adjusted**")
             raw_val = country_row[base_currency]
             adj_val = country_row["adjusted"]
             gap = raw_val - adj_val
-            st.write(f"Raw misvaluation: {raw_val:+.2%}")
-            st.write(f"GDP‑adjusted misvaluation: {adj_val:+.2%}")
-            st.write(
-                f"Gap (raw − adjusted): {gap:+.2%} "
-                "(portion explained by income differences vs abnormal pricing)."
+
+            st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">raw vs GDP‑adjusted</div>', unsafe_allow_html=True)
+            st.markdown(
+                f'<div class="nerd-value-bad">Raw misvaluation: {raw_val:+.2%}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">GDP‑adjusted misvaluation: {adj_val:+.2%}</div>',
+                unsafe_allow_html=True,
+            )
+            st.markdown(
+                f'<div class="nerd-value-neutral">Gap (raw − adjusted): {gap:+.2%} '
+                '(≈ income‑effect component).</div>',
+                unsafe_allow_html=True,
             )
 
-            # Raw data toggle for THIS release
-            st.markdown("**Raw data for this release**")
+            st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">raw data dump</div>', unsafe_allow_html=True)
             if st.checkbox("Show raw data for selected date", key="raw_date_checkbox"):
                 st.dataframe(
                     df_date[
@@ -722,7 +805,7 @@ def main():
 
         # ---------- Time travel for this country ----------
         with col_b:
-            st.markdown("**Time travel for this country**")
+            st.markdown('<div class="nerd-label">time travel</div>', unsafe_allow_html=True)
 
             country_history = df[df["name"] == country].sort_values("date")
 
@@ -736,8 +819,8 @@ def main():
                     "variable": "Index type",
                 },
                 color_discrete_map={
-                    base_currency: "#4284ce",
-                    "adjusted": "#bb1919",
+                    base_currency: "#16c784",  # raw
+                    "adjusted": "#ff4d4d",     # adjusted
                 },
             )
             fig_hist.update_layout(
@@ -753,6 +836,8 @@ def main():
                     ].sort_values("date"),
                     use_container_width=True,
                 )
+
+        st.markdown("</div>", unsafe_allow_html=True)
 
 
 if __name__ == "__main__":
