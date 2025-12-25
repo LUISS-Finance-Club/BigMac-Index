@@ -186,6 +186,7 @@ def main():
 
     # --- Big Mac hero image ---
     st.image(str(HERO_IMG), width="stretch")
+    st.caption("Shutterstock by majcot, Patcharaporn Puttipon4289")
 
     st.write("")  # spacing [web:625]
 
