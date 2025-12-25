@@ -364,7 +364,19 @@ def main():
         st.caption(
         "Shows the countries whose misvaluation changed the most since the previous release. "
         "‘Raw’ compares Big Mac dollar prices vs the selected base currency; ‘GDP-adjusted’ controls for income effects."
-    )
+        )
+
+        st.caption(
+        'A positive number in "Raw" indicates that BigMacs are more expensive in the stated country than the base (after converting using the market FX rate). A person earning and spending in this country gets less bang (or BigMacs) for their buck.'
+        )
+
+        st.caption(
+        'A positive number in "GDP-adjusted" indicates that, after controlling for income differences, BigMacs are more expensive in the stated country than the base. This suggests that factors other than income (e.g., market conditions, pricing strategies) are causing BigMacs to be relatively more expensive.'
+        )
+
+        st.caption(
+        'For the comparisons of releases, a positive change shown in RED means the currency has DEPRECIATED vs the base since the last release (i.e., BigMacs got more expensive in that country relative to the base). A negative change shown in GREEN means the currency has APPRECIATED vs the base since the last release (i.e., BigMacs got cheaper in that country relative to the base).'
+        )
 
 
         colA, colB = st.columns(2)
@@ -493,7 +505,7 @@ def main():
 
     # ---------------- MAP SECTION ----------------
     st.subheader(f"Map view: Raw Big Mac Index vs {base_currency}")
-    st.caption("Countries with Big Mac data are colored; all others are shown in the default land color.")
+    st.caption("Optimized for desktop use. Countries with Big Mac data are colored; all others are shown in the default land color.")
 
     df_date_map = df_date.copy()
 
