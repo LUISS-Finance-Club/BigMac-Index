@@ -659,13 +659,15 @@ def main():
     st.write("")  # small spacer
 
     # --- Stats for nerds ---
-    with st.expander("Stats for nerds"):
+    with st.expander("Stats For Nerds"):
         st.markdown(
             """
             <style>
             .nerd-block {
-                font-family: "Roboto Mono", "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-                background: radial-gradient(circle at top left, #111827 0, #020617 45%, #000000 100%);
+                font-family: "Roboto Mono", "SF Mono", Menlo, Monaco, Consolas,
+                            "Liberation Mono", "Courier New", monospace;
+                background: radial-gradient(circle at top left,
+                            #111827 0, #020617 45%, #000000 100%);
                 border-radius: 12px;
                 padding: 18px 20px 14px 20px;
                 border: 1px solid rgba(148, 163, 184, 0.35);
@@ -681,19 +683,21 @@ def main():
             .nerd-label {
                 font-size: 12px;
                 color: #9ca3af;
+                text-transform: uppercase;
+                letter-spacing: 0.08em;
             }
-            .nerd-value-good {
-                font-size: 14px;
-                color: #16c784;
-            }
-            .nerd-value-bad {
-                font-size: 14px;
-                color: #ff4d4d;
-            }
+            .nerd-value-good,
+            .nerd-value-bad,
             .nerd-value-neutral {
                 font-size: 14px;
-                color: #e5e7eb;
+                white-space: normal !important;
+                overflow: visible !important;
+                text-overflow: clip !important;
             }
+            .nerd-value-good  { color: #16c784; }
+            .nerd-value-bad   { color: #ff4d4d; }
+            .nerd-value-neutral { color: #e5e7eb; }
+
             .nerd-separator {
                 border-top: 1px dashed rgba(148, 163, 184, 0.35);
                 margin: 12px 0 14px 0;
@@ -732,7 +736,7 @@ def main():
         col_cs1, col_cs2 = st.columns(2)
 
         with col_cs1:
-            st.markdown('<span class="nerd-label">where this country sits</span>', unsafe_allow_html=True)
+            st.markdown('<span class="nerd-label">WHERE THIS COUNTRY SITS</span>', unsafe_allow_html=True)
             st.markdown(
                 f'<div class="nerd-value-neutral">Universe: {total_c} countries this release</div>',
                 unsafe_allow_html=True,
@@ -743,8 +747,8 @@ def main():
                 unsafe_allow_html=True,
             )
             st.markdown(
-                f'<div class="nerd-value-neutral">Rank by |misvaluation|: #{int(this["rank_abs"])} '
-                f'({this["iso_a3"]})</div>',
+                f'<div class="nerd-value-neutral">Rank by |misvaluation|: '
+                f'#{int(this["rank_abs"])} ({this["iso_a3"]})</div>',
                 unsafe_allow_html=True,
             )
             st.markdown(
@@ -760,7 +764,7 @@ def main():
                 )
 
         with col_cs2:
-            st.markdown('<span class="nerd-label">market‑wide picture</span>', unsafe_allow_html=True)
+            st.markdown('<span class="nerd-label">MARKET‑WIDE PICTURE</span>', unsafe_allow_html=True)
             st.markdown(
                 f'<div class="nerd-value-bad">Overvalued vs {base_currency}: '
                 f'{num_over} / {total_c}</div>',
@@ -783,7 +787,7 @@ def main():
         col_a, col_b = st.columns(2)
 
         with col_a:
-            st.markdown('<div class="nerd-label">current snapshot</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">CURRENT SNAPSHOT</div>', unsafe_allow_html=True)
             st.markdown(
                 f'<div class="nerd-value-neutral">Release date: {selected_date.date()}</div>',
                 unsafe_allow_html=True,
@@ -813,7 +817,7 @@ def main():
             gap = raw_val - adj_val
 
             st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="nerd-label">raw vs GDP‑adjusted</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">RAW VS GDP‑ADJUSTED</div>', unsafe_allow_html=True)
             st.markdown(
                 f'<div class="nerd-value-bad">Raw misvaluation: {raw_val:+.2%}</div>',
                 unsafe_allow_html=True,
@@ -829,7 +833,7 @@ def main():
             )
 
             st.markdown('<div class="nerd-separator"></div>', unsafe_allow_html=True)
-            st.markdown('<div class="nerd-label">raw data dump</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">RAW DATA DUMP</div>', unsafe_allow_html=True)
             if st.checkbox("Show raw data for selected date", key="raw_date_checkbox"):
                 st.dataframe(
                     df_date[
@@ -849,7 +853,7 @@ def main():
 
         # ---------- Time travel for this country ----------
         with col_b:
-            st.markdown('<div class="nerd-label">time travel</div>', unsafe_allow_html=True)
+            st.markdown('<div class="nerd-label">TIME TRAVEL</div>', unsafe_allow_html=True)
 
             country_history = df[df["name"] == country].sort_values("date")
 
@@ -882,6 +886,7 @@ def main():
                 )
 
         st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 if __name__ == "__main__":
