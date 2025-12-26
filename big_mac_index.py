@@ -301,7 +301,7 @@ def main():
 
     #st.write("Hero image exists?", HERO_IMG.exists(), "Path:", str(HERO_IMG))
 
-    st.write("Interactive Big Mac Index Dashboard")
+    st.subheader("Interactive Big Mac Index Dashboard")
 
     st.markdown("""
     This dashboard replicates The Economist's Big Mac Index calculations with:
