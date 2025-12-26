@@ -597,7 +597,7 @@ def main():
         orientation="h",
     )
 
-    fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
+    fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False, plot_bgcolor="#131b4d")
     st.plotly_chart(fig1, use_container_width=True)
 
     # plot adjusted index
