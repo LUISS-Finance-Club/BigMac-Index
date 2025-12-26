@@ -132,7 +132,7 @@ def main():
             font-size: 14px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #ff914d;
+            color: #ffffff;
             margin-bottom: 6px;
         }
         .nerd-label {
@@ -597,7 +597,7 @@ def main():
         orientation="h",
     )
 
-    fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False,  paper_bgcolor="#020617")
+    fig1.update_layout(yaxis={'categoryorder':'total ascending'}, xaxis_title='Index (over/undervaluation)', showlegend=False)
     st.plotly_chart(fig1, use_container_width=True)
 
     # plot adjusted index
