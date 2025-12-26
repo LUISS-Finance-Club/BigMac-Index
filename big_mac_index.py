@@ -250,7 +250,7 @@ def main():
         ">
         <img src="data:image/png;base64,{logo_b64}" style="width:90px; height:auto;" />
         <div style="
-            font-size:22px;
+            font-size: 44px;
             font-weight:444;
             line-height:1;
             margin-top:-6px;   /* <-- moves text UP (tune this) */
