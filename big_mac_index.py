@@ -119,8 +119,6 @@ def main():
 
         /* Nerd block styling */
         .nerd-block {
-            font-family: "Roboto Mono", Menlo, Monaco, Consolas, "Liberation Mono",
-                        "Courier New", monospace;
             background: radial-gradient(circle at top left,
                         #111827 0, #020617 45%, #000000 100%);
             border-radius: 12px;
