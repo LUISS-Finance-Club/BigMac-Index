@@ -132,7 +132,7 @@ def main():
             font-size: 14px;
             letter-spacing: 0.08em;
             text-transform: uppercase;
-            color: #a5b4fc;
+            color: #ff914d;
             margin-bottom: 6px;
         }
         .nerd-label {
