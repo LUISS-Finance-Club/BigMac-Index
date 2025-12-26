@@ -715,11 +715,12 @@ def main():
 
     # --- Stats for nerds ---
     with st.expander("Stats For Nerds"):
-        # Outer hacker-style container
-        st.markdown('<div class="nerd-block">', unsafe_allow_html=True)
 
         # ---------- Cross-section stats for this release ----------
-        st.markdown('<div class="nerd-title">CROSS‑SECTION SNAPSHOT</div>', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="nerd-block"><div class="nerd-title">CROSS‑SECTION SNAPSHOT</div>',
+            unsafe_allow_html=True,
+        )
 
         misvals = df_date[["name", "iso_a3", base_currency, "adjusted"]].copy()
         misvals["abs_raw"] = misvals[base_currency].abs()
@@ -877,8 +878,8 @@ def main():
                 "variable": "Index type",
             },
             color_discrete_map={
-                base_currency: "#16c784",   # raw
-                "adjusted": "#ff4d4d",      # adjusted
+                base_currency: "#16c784",
+                "adjusted": "#ff4d4d",
             },
         )
         fig_hist.update_layout(
@@ -895,6 +896,7 @@ def main():
                 use_container_width=True,
             )
 
+        # close nerd-block
         st.markdown("</div>", unsafe_allow_html=True)
 
 
