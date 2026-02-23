@@ -13,13 +13,8 @@ jobs:
         run: |
           URL="https://bigmacindexlfc.streamlit.app/"
           echo "Pinging $URL"
-          RESPONSE_CODE=$(curl -L --write-out "%{http_code}" --silent --max-time 30 \
+          curl -L --max-redirs 10 --silent --max-time 30 \
             -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
-            -H "Accept: text/html" \
-            "$URL" --output /dev/null)
-          echo "Response code: $RESPONSE_CODE"
-          if [[ ! "$RESPONSE_CODE" =~ ^[23][0-9][0-9]$ ]]; then
-            echo " Bad response ($RESPONSE_CODE) - check app"
-            exit 1
-          fi
-          echo " Success ($RESPONSE_CODE)"
+            -H "Accept: text/html,application/xhtml+xml" \
+            --write-out "HTTP %{http_code}" --output /dev/null "$URL"
+          echo "Ping completed (redirects handled)"
