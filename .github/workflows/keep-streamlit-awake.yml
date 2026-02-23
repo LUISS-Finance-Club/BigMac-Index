@@ -13,8 +13,13 @@ jobs:
         run: |
           URL="https://bigmacindexlfc.streamlit.app/"
           echo "Pinging $URL"
-          if ! curl -L --fail --silent --show-error --max-time 30 "$URL" > /dev/null; then
-            echo "Ping FAILED - app may be asleep or unreachable"
+          RESPONSE_CODE=$(curl -L --write-out "%{http_code}" --silent --max-time 30 \
+            -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36" \
+            -H "Accept: text/html" \
+            "$URL" --output /dev/null)
+          echo "Response code: $RESPONSE_CODE"
+          if [[ ! "$RESPONSE_CODE" =~ ^[23][0-9][0-9]$ ]]; then
+            echo " Bad response ($RESPONSE_CODE) - check app"
             exit 1
           fi
-          echo "Ping succeeded (HTTP 2xx/3xx)"
+          echo " Success ($RESPONSE_CODE)"
